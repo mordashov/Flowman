@@ -25,7 +25,7 @@
             <Label Content="Кол-во обращений:" FontSize="16" VerticalAlignment="Center"  Margin="20,0,0,0"/>
             <Label Name="LabelRequestsCount" Content="0/0" FontSize="16" VerticalAlignment="Center"  Margin="10,0,0,0" Width="50"/>
             <Label Content="Кол-во баллов:" FontSize="16" VerticalAlignment="Center"  Margin="20,0,0,0"/>
-            <Label Content="0/0" FontSize="16" VerticalAlignment="Center"  Margin="10,0,0,0" Width="50"/>
+            <Label Name="LabelCountScr" Content="0/0" FontSize="16" VerticalAlignment="Center"  Margin="10,0,0,0" Width="50"/>
         </StackPanel>
         <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Bottom">
             <Label  Content="Обращения"  HorizontalAlignment="Left" FontSize="20" FontWeight="Bold" Margin="20,0,0,0" Width="150" />

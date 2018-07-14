@@ -168,6 +168,14 @@ namespace Flow_management
 
             LabelRequestsCount.Content = Сounting(month, year, mp, sql);
 
+            sql = @"SELECT Sum(cor.cor_scr) AS [Sum-cor_scr]
+                    FROM (ord INNER JOIN flw ON ord.ord_id = flw.ord_id) INNER JOIN (cor INNER JOIN app ON cor.cor_id = app.cor_id) ON ord.ord_id = app.ord_id
+                    WHERE (((flw.mng_tn)=@tn) AND ((Year([ord_dt]))=@Year) AND ((Month([ord_dt]))=@Month))";
+
+            string content = Сounting(month, year, mp, sql);
+            if (string.IsNullOrEmpty(content)) content = "0";
+            LabelCountScr.Content = content;
+
             //Получаю кол-во заявок по менеджеру
             sql = @"SELECT Count(flw.flw_id) AS cnt
                 FROM ord INNER JOIN flw ON ord.ord_id = flw.ord_id
@@ -175,6 +183,15 @@ namespace Flow_management
                 ";
             mp = null;
             LabelRequestsCount.Content = LabelRequestsCount.Content + "/" + Сounting(month, year, mp, sql);
+
+            sql = @"SELECT Sum(cor.cor_scr) AS [Sum-cor_scr]
+                    FROM (ord INNER JOIN flw ON ord.ord_id = flw.ord_id) INNER JOIN (cor INNER JOIN app ON cor.cor_id = app.cor_id) ON ord.ord_id = app.ord_id
+                    WHERE (((Year([ord_dt]))=@Year) AND ((Month([ord_dt]))=@Month))";
+
+            content = Сounting(month, year, mp, sql);
+            if (string.IsNullOrEmpty(content)) content = "0";
+            LabelCountScr.Content = content;
+            LabelCountScr.Content = LabelCountScr.Content + "/" + content;
 
 
         }
