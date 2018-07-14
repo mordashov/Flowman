@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.OleDb;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -47,6 +48,7 @@ namespace Flow_management
             ComboBoxYear.SelectedValue = DateTime.Now.Year.ToString();
         }
 
+        //Генерация комбобокса с месяцем
         private void GenerateComboBoxMonth()
         {
             ComboBoxMonth.Items.Add("Январь");
@@ -65,8 +67,40 @@ namespace Flow_management
             ComboBoxMonth.SelectedIndex = (int)DateTime.Now.Month;
         }
 
+        //Подсчет кол-ва 
+        private string Сounting(string month, string year, string mp, string sql)
+        {
+            int param1 = 0;
+            int param2 = 0;
+            int param3 = 0;
+
+            try
+            {
+                param1 = int.Parse(mp);
+                param2 = int.Parse(year);
+                param3 = int.Parse(month);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Ошибка преобразования параметров при подсчете заявок");
+                Environment.Exit(0);
+            }
+
+            MsAccess acs = new MsAccess();
+            OleDbCommand cmd = new OleDbCommand(sql);
+            cmd.Parameters.Add("tn", OleDbType.Integer, 10, "tn");
+            cmd.Parameters.Add("Year", OleDbType.Integer, 4, "Year");
+            cmd.Parameters.Add("Month", OleDbType.Integer, 4, "Month");
+            cmd.Parameters["tn"].Value = param1;
+            cmd.Parameters["Year"].Value = param2;
+            cmd.Parameters["Month"].Value = param3;
+
+            return acs.GetValueCommand(cmd);
+        }
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            //Формирование DataGrid
             string sql = @"
                             SELECT 
                             mng.mng_fln AS МП
@@ -86,15 +120,59 @@ namespace Flow_management
                             ";
             GenerateDataGridReq(sql);
 
+            //Формирование списка менеджеров
             sql = "SELECT mng.mng_th as id, mng.mng_fln as Name FROM mng; ";
             GenerateComboBoxMp(sql);
 
+            //Формирование списка годов
             sql = @"SELECT Year([ord_dt]) AS Год
                     FROM ord
                     GROUP BY Year([ord_dt]);";
             GenerateComboBoxYear(sql);
 
+            //Формирование списка менеджеров
             GenerateComboBoxMonth();
+
+            //Подсчет кол-ва обращений
+            CountRequestsMp();
+        }
+
+        private void CountRequestsMp()
+        {
+            //Получаю кол-во заявок по менеджеру
+            string sql = @"SELECT Count(flw.flw_id) AS cnt
+                FROM ord INNER JOIN flw ON ord.ord_id = flw.ord_id
+                WHERE (((flw.mng_tn)=@tn) AND ((Year([ord_dt]))=@Year) AND ((Month([ord_dt]))=@Month));
+                ";
+            string month = ComboBoxMonth.SelectedIndex.ToString();
+            string year = ComboBoxYear.SelectedValue.ToString();
+            string mp = "0";
+            try
+            {
+                mp = ComboBoxMp.SelectedValue.ToString();
+            }
+            catch (Exception exception)
+            {
+                mp = "0";
+            }
+
+            LabelRequestsCount.Content = Сounting(month, year, mp, sql);
+
+            //Получаю кол-во заявок по менеджеру
+            sql = @"SELECT Count(flw.flw_id) AS cnt
+                FROM ord INNER JOIN flw ON ord.ord_id = flw.ord_id
+                WHERE (((Year([ord_dt]))=@Year) AND ((Month([ord_dt]))=@Month));
+                ";
+
+            LabelRequestsCount.Content = LabelRequestsCount.Content + "/" + Сounting(month, year, mp, sql);
+
+
+        }
+
+        private void ComboBoxMp_DropDownClosed(object sender, EventArgs e)
+        {
+            // Подсчет кол - ва обращений
+            CountRequestsMp();
         }
     }
 }

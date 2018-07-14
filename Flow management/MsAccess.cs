@@ -87,5 +87,29 @@ namespace Flow_management
 
             return dataTable;
         }
+
+        //Получаю единственное значение
+        public string GetValueSql(string sql)
+        {
+            OleDbConnection connection = CreateConnection();
+            OleDbCommand command = new OleDbCommand(sql, connection);
+            string valueSql = command.ExecuteScalar().ToString();
+
+            connection.Close();
+
+            return valueSql;
+        }
+
+        //Получаю единственное значение
+        public string GetValueCommand(OleDbCommand command)
+        {
+            OleDbConnection connection = CreateConnection();
+            command.Connection = connection;
+            string valueSql = command.ExecuteScalar().ToString();
+
+            connection.Close();
+
+            return valueSql;
+        }
     }
 }
