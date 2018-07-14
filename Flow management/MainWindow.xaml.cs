@@ -76,7 +76,11 @@ namespace Flow_management
 
             try
             {
-                param1 = int.Parse(mp);
+                if (mp != null)
+                {
+                    param1 = int.Parse(mp);
+                }
+
                 param2 = int.Parse(year);
                 param3 = int.Parse(month);
             }
@@ -88,11 +92,17 @@ namespace Flow_management
 
             MsAccess acs = new MsAccess();
             OleDbCommand cmd = new OleDbCommand(sql);
-            cmd.Parameters.Add("tn", OleDbType.Integer, 10, "tn");
+
+            if (mp != null)
+            {
+                cmd.Parameters.Add("tn", OleDbType.Integer, 10, "tn");
+                cmd.Parameters["tn"].Value = param1; 
+            }
+
             cmd.Parameters.Add("Year", OleDbType.Integer, 4, "Year");
-            cmd.Parameters.Add("Month", OleDbType.Integer, 4, "Month");
-            cmd.Parameters["tn"].Value = param1;
             cmd.Parameters["Year"].Value = param2;
+
+            cmd.Parameters.Add("Month", OleDbType.Integer, 4, "Month");
             cmd.Parameters["Month"].Value = param3;
 
             return acs.GetValueCommand(cmd);
@@ -163,7 +173,7 @@ namespace Flow_management
                 FROM ord INNER JOIN flw ON ord.ord_id = flw.ord_id
                 WHERE (((Year([ord_dt]))=@Year) AND ((Month([ord_dt]))=@Month));
                 ";
-
+            mp = null;
             LabelRequestsCount.Content = LabelRequestsCount.Content + "/" + Сounting(month, year, mp, sql);
 
 
@@ -173,6 +183,40 @@ namespace Flow_management
         {
             // Подсчет кол - ва обращений
             CountRequestsMp();
+        }
+
+        private void ComboBoxMp_KeyUp(object sender, KeyEventArgs e)
+        {
+            // Подсчет кол - ва обращений
+            CountRequestsMp();
+        }
+
+        private void ComboBoxYear_DropDownClosed(object sender, EventArgs e)
+        {
+            // Подсчет кол - ва обращений
+            CountRequestsMp();
+
+        }
+
+        private void ComboBoxYear_KeyUp(object sender, KeyEventArgs e)
+        {
+            // Подсчет кол - ва обращений
+            CountRequestsMp();
+
+        }
+
+        private void ComboBoxMonth_DropDownClosed(object sender, EventArgs e)
+        {
+            // Подсчет кол - ва обращений
+            CountRequestsMp();
+
+        }
+
+        private void ComboBoxMonth_KeyUp(object sender, KeyEventArgs e)
+        {
+            // Подсчет кол - ва обращений
+            CountRequestsMp();
+
         }
     }
 }
