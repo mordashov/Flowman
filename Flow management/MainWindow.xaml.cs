@@ -44,6 +44,25 @@ namespace Flow_management
         {
             MsAccess acs = new MsAccess();
             ComboBoxYear.ItemsSource = acs.CreateDataTable(sql).DefaultView;
+            ComboBoxYear.SelectedValue = DateTime.Now.Year.ToString();
+        }
+
+        private void GenerateComboBoxMonth()
+        {
+            ComboBoxMonth.Items.Add("Январь");
+            ComboBoxMonth.Items.Add("Фераль");
+            ComboBoxMonth.Items.Add("Март");
+            ComboBoxMonth.Items.Add("Апрель");
+            ComboBoxMonth.Items.Add("Май");
+            ComboBoxMonth.Items.Add("Июнь");
+            ComboBoxMonth.Items.Add("Июль");
+            ComboBoxMonth.Items.Add("Август");
+            ComboBoxMonth.Items.Add("Сентябрь");
+            ComboBoxMonth.Items.Add("Октябрь");
+            ComboBoxMonth.Items.Add("Ноябрь");
+            ComboBoxMonth.Items.Add("Декабрь");
+
+            ComboBoxMonth.SelectedIndex = (int)DateTime.Now.Month;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -74,6 +93,8 @@ namespace Flow_management
                     FROM ord
                     GROUP BY Year([ord_dt]);";
             GenerateComboBoxYear(sql);
+
+            GenerateComboBoxMonth();
         }
     }
 }

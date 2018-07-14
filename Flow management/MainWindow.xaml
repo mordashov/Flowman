@@ -19,7 +19,7 @@
             <Label x:Name="LabelMonth" Content="Месяц" VerticalAlignment="Center" FontSize="16" Margin="20,0,0,0"/>
             <ComboBox x:Name="ComboBoxMonth" Width="100" Height="30" VerticalAlignment="Center" FontSize="16"  Margin="10,0,0,0"></ComboBox>
             <Label x:Name="LabelYear" Content="Год" VerticalAlignment="Center" FontSize="16" Margin="20,0,0,0"/>
-            <ComboBox x:Name="ComboBoxYear" Width="70" Height="30" VerticalAlignment="Center"  Margin="10,0,0,0" FontSize="16" DisplayMemberPath="Год"></ComboBox>
+            <ComboBox x:Name="ComboBoxYear" Width="70" Height="30" VerticalAlignment="Center"  Margin="10,0,0,0" FontSize="16" DisplayMemberPath="Год" SelectedValuePath="Год"></ComboBox>
             <Label Content="МП" FontSize="16" VerticalAlignment="Center"  Margin="20,0,0,0"/>
             <ComboBox x:Name="ComboBoxMp" Width="300" Height="30" VerticalAlignment="Center"  Margin="10,0,0,0" DisplayMemberPath="Name" SelectedValuePath="id" FontSize="16"></ComboBox>
             <Label Content="Кол-во обращений:" FontSize="16" VerticalAlignment="Center"  Margin="20,0,0,0"/>
