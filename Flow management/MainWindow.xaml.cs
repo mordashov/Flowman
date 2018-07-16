@@ -190,7 +190,6 @@ namespace Flow_management
 
             content = Сounting(month, year, mp, sql);
             if (string.IsNullOrEmpty(content)) content = "0";
-            LabelCountScr.Content = content;
             LabelCountScr.Content = LabelCountScr.Content + "/" + content;
 
 
