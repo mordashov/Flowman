@@ -31,6 +31,6 @@
             <Label  Content="Обращения"  HorizontalAlignment="Left" FontSize="20" FontWeight="Bold" Margin="20,0,0,0" Width="150" />
             <Button Width="93" Height="30" FontSize="16" Content="Добавить" Margin="20,0,0,0" HorizontalAlignment="Left"></Button>
         </StackPanel>
-        <DataGrid Name="DataGridRequests" Grid.Row="3" Margin="20,0,20,40" ItemsSource="{Binding}" IsReadOnly="True" />
+        <DataGrid Name="DataGridRequests" Grid.Row="3" Margin="20,0,20,40" ItemsSource="{Binding}" IsReadOnly="True" AutoGeneratingColumn="DataGridRequests_AutoGeneratingColumn" />
     </Grid>
 </Window>
