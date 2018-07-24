@@ -22,22 +22,33 @@ namespace Flow_management
         public Order()
         {
             InitializeComponent();
+            GenerateListBoxContent();
         }
 
         private void GenerateListBoxContent()
         {
 
-        CheckBox ch = new CheckBox()
+            List<KeyValuePair<int, string>> list = new List<KeyValuePair<int, string>>
             {
-                Content = "Первый",
+                new KeyValuePair<int, string>(0, "Первый"),
+                new KeyValuePair<int, string>(1, "Второй"),
+                new KeyValuePair<int, string>(2, "Третий")
             };
+
+
+
+            CheckBox ch = new CheckBox()
+            {
+                Content = list[0].Value
+        };
+
             CheckBox ch1 = new CheckBox()
             {
-                Content = "Второй"
+                Content = list[1].Value
             };
             CheckBox ch2 = new CheckBox()
             {
-                Content = "Третий"
+                Content = list[2].Value
             };
             ListBoxContent.Items.Insert(0, ch);
             ListBoxContent.Items.Insert(1, ch1);
