@@ -87,33 +87,18 @@ namespace Flow_management
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            //Формирование DataGrid
-            string sql = @"
-                            SELECT 
-                            mng.mng_fln AS МП
-                            , ord.ord_num AS Обращение
-                            , ord.ord_dt AS Дата
-                            , stf.stf_fln AS Сотрудник
-                            , pos.pos_nm AS Должность
-                            , dep.dep_mn AS Отдел
-                            , """" AS Норма
-                            , """" AS Итого
-                            , """" AS [Норма отдела]
-                            , """" AS [Итого по отделу]
-                            FROM (dep INNER JOIN stf ON dep.dep_id = stf.dep_id) 
-                                INNER JOIN (pos INNER JOIN (ord INNER JOIN (mng INNER JOIN flw ON mng.mng_th = flw.mng_tn) 
-                                ON ord.ord_id = flw.ord_id) 
-                                ON pos.pos_id = flw.pos_id) ON stf.stf_tn = flw.stf_tn;
-                            ";
-            GenerateDataGridReq(sql);
-
-            //Формирование списка менеджеров
-            sql = "SELECT mng.mng_th as id, mng.mng_fln as Name FROM mng; ";
-            GenerateComboBoxMp(sql);
 
             //Формирования перечня дат по которым есть нормы
-            sql = "SELECT [nrm].[nrm_dt] as [date] FROM [nrm] GROUP BY [nrm].[nrm_dt] ORDER BY [nrm].[nrm_dt] DESC ;";
+            string sql = "SELECT [nrm].[nrm_dt] as [date] FROM [nrm] GROUP BY [nrm].[nrm_dt] ORDER BY [nrm].[nrm_dt] DESC ;";
             GenerateComboBoxDate(sql);
+            
+            //Формирование DataGrid
+            DataGridReqReload();
+
+            //Формирование списка менеджеров
+            sql = "SELECT mng.mng_tn as id, mng.mng_fln as Name FROM mng; ";
+            GenerateComboBoxMp(sql);
+
 
             //Подсчет кол-ва обращений
             CountRequestsMp();
@@ -163,6 +148,43 @@ namespace Flow_management
             if (string.IsNullOrEmpty(content)) content = "0";
             LabelCountScr.Content = LabelCountScr.Content + "/" + content;
 
+            //Формирую DataGrid
+            DataGridReqReload();
+
+        }
+
+        private void DataGridReqReload()
+        {
+            //Формирование DataGrid
+            DateTime dt = DateTime.Parse(ComboBoxDate.SelectedValue.ToString());
+            string tn = "%";
+            try
+            {
+                tn = ComboBoxMp.SelectedValue.ToString();
+            }
+            catch (Exception e)
+            {
+               //
+            }
+            string sql = $@"
+                            SELECT 
+                            mng.mng_fln AS МП
+                            , ord.ord_num AS Обращение
+                            , ord.ord_dt AS Дата
+                            , stf.stf_fln AS Сотрудник
+                            , pos.pos_nm AS Должность
+                            , dep.dep_mn AS Отдел
+                            , """" AS Норма
+                            , """" AS Итого
+                            , """" AS [Норма отдела]
+                            , """" AS [Итого по отделу]
+                            FROM (dep INNER JOIN stf ON dep.dep_id = stf.dep_id) 
+                                INNER JOIN (pos INNER JOIN (ord INNER JOIN (mng INNER JOIN flw ON mng.mng_tn = flw.mng_tn) 
+                                ON ord.ord_id = flw.ord_id) 
+                                ON pos.pos_id = flw.pos_id) ON stf.stf_tn = flw.stf_tn
+                            WHERE ord.ord_dt = #{dt:M-d-yyyy}# AND mng.mng_tn LIKE '{tn}'
+                            ";
+            GenerateDataGridReq(sql);
         }
 
         private void ComboBoxMp_DropDownClosed(object sender, EventArgs e)
