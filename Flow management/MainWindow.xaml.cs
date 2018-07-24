@@ -188,5 +188,17 @@ namespace Flow_management
             // Подсчет кол - ва обращений
             CountRequestsMp();
         }
+
+        private void DataGridRequests_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            //Изменение формата колонки Дата в DataGridRequests
+            if (e.PropertyName == "Дата")
+            {
+                if (e.Column is DataGridTextColumn column)
+                {
+                    if (column.Binding is Binding binding) binding.StringFormat = "dd.MM.yyyy";
+                }
+            }
+        }
     }
 }
