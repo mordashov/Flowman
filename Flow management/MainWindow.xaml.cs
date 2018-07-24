@@ -40,39 +40,20 @@ namespace Flow_management
             ComboBoxMp.ItemsSource = acs.CreateDataTable(sql).DefaultView;
         }
 
-        //Генерация списка годов для комбобокс присутствующих в потоке заявок
-        private void GenerateComboBoxYear(string sql)
+        //Генерация перечня дат, по которым есть нормы
+        private void GenerateComboBoxDate(string sql)
         {
             MsAccess acs = new MsAccess();
-            ComboBoxYear.ItemsSource = acs.CreateDataTable(sql).DefaultView;
-            ComboBoxYear.SelectedValue = DateTime.Now.Year.ToString();
-        }
-
-        //Генерация комбобокса с месяцем
-        private void GenerateComboBoxMonth()
-        {
-            ComboBoxMonth.Items.Add("Январь");
-            ComboBoxMonth.Items.Add("Фераль");
-            ComboBoxMonth.Items.Add("Март");
-            ComboBoxMonth.Items.Add("Апрель");
-            ComboBoxMonth.Items.Add("Май");
-            ComboBoxMonth.Items.Add("Июнь");
-            ComboBoxMonth.Items.Add("Июль");
-            ComboBoxMonth.Items.Add("Август");
-            ComboBoxMonth.Items.Add("Сентябрь");
-            ComboBoxMonth.Items.Add("Октябрь");
-            ComboBoxMonth.Items.Add("Ноябрь");
-            ComboBoxMonth.Items.Add("Декабрь");
-
-            ComboBoxMonth.SelectedIndex = (int)DateTime.Now.Month;
+            ComboBoxDate.ItemsSource = acs.CreateDataTable(sql).DefaultView;
+            ComboBoxDate.SelectedIndex = 0;
+            ComboBoxDate.ItemStringFormat = "dd.MM.yyyy";
         }
 
         //Подсчет кол-ва 
-        private string Сounting(string month, string year, string mp, string sql)
+        private string Сounting(DateTime data, string mp, string sql)
         {
             int param1 = 0;
-            int param2 = 0;
-            int param3 = 0;
+            DateTime param2 = DateTime.Now;
 
             try
             {
@@ -81,8 +62,7 @@ namespace Flow_management
                     param1 = int.Parse(mp);
                 }
 
-                param2 = int.Parse(year);
-                param3 = int.Parse(month);
+                param2 = data;
             }
             catch (Exception e)
             {
@@ -99,11 +79,8 @@ namespace Flow_management
                 cmd.Parameters["tn"].Value = param1; 
             }
 
-            cmd.Parameters.Add("Year", OleDbType.Integer, 4, "Year");
-            cmd.Parameters["Year"].Value = param2;
-
-            cmd.Parameters.Add("Month", OleDbType.Integer, 4, "Month");
-            cmd.Parameters["Month"].Value = param3;
+            cmd.Parameters.Add("Data", OleDbType.Date, 4, "Data");
+            cmd.Parameters["Data"].Value = param2;
 
             return acs.GetValueCommand(cmd);
         }
@@ -134,14 +111,9 @@ namespace Flow_management
             sql = "SELECT mng.mng_th as id, mng.mng_fln as Name FROM mng; ";
             GenerateComboBoxMp(sql);
 
-            //Формирование списка годов
-            sql = @"SELECT Year([ord_dt]) AS Год
-                    FROM ord
-                    GROUP BY Year([ord_dt]);";
-            GenerateComboBoxYear(sql);
-
-            //Формирование списка менеджеров
-            GenerateComboBoxMonth();
+            //Формирования перечня дат по которым есть нормы
+            sql = "SELECT [nrm].[nrm_dt] as [date] FROM [nrm] GROUP BY [nrm].[nrm_dt] ORDER BY [nrm].[nrm_dt] DESC ;";
+            GenerateComboBoxDate(sql);
 
             //Подсчет кол-ва обращений
             CountRequestsMp();
@@ -152,10 +124,9 @@ namespace Flow_management
             //Получаю кол-во заявок по менеджеру
             string sql = @"SELECT Count(flw.flw_id) AS cnt
                 FROM ord INNER JOIN flw ON ord.ord_id = flw.ord_id
-                WHERE (((flw.mng_tn)=@tn) AND ((Year([ord_dt]))=@Year) AND ((Month([ord_dt]))=@Month));
+                WHERE flw.mng_tn=@tn AND [ord_dt]=@Data;
                 ";
-            string month = ComboBoxMonth.SelectedIndex.ToString();
-            string year = ComboBoxYear.SelectedValue.ToString();
+            DateTime date = DateTime.Parse(ComboBoxDate.SelectedValue.ToString());
             string mp = "0";
             try
             {
@@ -166,32 +137,31 @@ namespace Flow_management
                 mp = "0";
             }
 
-            LabelRequestsCount.Content = Сounting(month, year, mp, sql);
+            LabelRequestsCount.Content = Сounting(date, mp, sql);
 
             sql = @"SELECT Sum(cor.cor_scr) AS [Sum-cor_scr]
                     FROM (ord INNER JOIN flw ON ord.ord_id = flw.ord_id) INNER JOIN (cor INNER JOIN app ON cor.cor_id = app.cor_id) ON ord.ord_id = app.ord_id
-                    WHERE (((flw.mng_tn)=@tn) AND ((Year([ord_dt]))=@Year) AND ((Month([ord_dt]))=@Month))";
+                    WHERE flw.mng_tn=@tn AND [ord_dt]=@Date";
 
-            string content = Сounting(month, year, mp, sql);
+            string content = Сounting(date, mp, sql);
             if (string.IsNullOrEmpty(content)) content = "0";
             LabelCountScr.Content = content;
 
             //Получаю кол-во заявок по менеджеру
             sql = @"SELECT Count(flw.flw_id) AS cnt
                 FROM ord INNER JOIN flw ON ord.ord_id = flw.ord_id
-                WHERE (((Year([ord_dt]))=@Year) AND ((Month([ord_dt]))=@Month));
+                WHERE [ord_dt]=@Date;
                 ";
             mp = null;
-            LabelRequestsCount.Content = LabelRequestsCount.Content + "/" + Сounting(month, year, mp, sql);
+            LabelRequestsCount.Content = LabelRequestsCount.Content + "/" + Сounting(date, mp, sql);
 
             sql = @"SELECT Sum(cor.cor_scr) AS [Sum-cor_scr]
                     FROM (ord INNER JOIN flw ON ord.ord_id = flw.ord_id) INNER JOIN (cor INNER JOIN app ON cor.cor_id = app.cor_id) ON ord.ord_id = app.ord_id
-                    WHERE (((Year([ord_dt]))=@Year) AND ((Month([ord_dt]))=@Month))";
-
-            content = Сounting(month, year, mp, sql);
+                    WHERE [ord_dt]=@Date;
+                    ";
+            content = Сounting(date, mp, sql);
             if (string.IsNullOrEmpty(content)) content = "0";
             LabelCountScr.Content = LabelCountScr.Content + "/" + content;
-
 
         }
 
@@ -207,32 +177,16 @@ namespace Flow_management
             CountRequestsMp();
         }
 
-        private void ComboBoxYear_DropDownClosed(object sender, EventArgs e)
+        private void ComboBoxDate_DropDownClosed(object sender, EventArgs e)
         {
             // Подсчет кол - ва обращений
             CountRequestsMp();
-
         }
 
-        private void ComboBoxYear_KeyUp(object sender, KeyEventArgs e)
+        private void ComboBoxDate_KeyUp(object sender, KeyEventArgs e)
         {
             // Подсчет кол - ва обращений
             CountRequestsMp();
-
-        }
-
-        private void ComboBoxMonth_DropDownClosed(object sender, EventArgs e)
-        {
-            // Подсчет кол - ва обращений
-            CountRequestsMp();
-
-        }
-
-        private void ComboBoxMonth_KeyUp(object sender, KeyEventArgs e)
-        {
-            // Подсчет кол - ва обращений
-            CountRequestsMp();
-
         }
     }
 }
