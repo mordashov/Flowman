@@ -222,5 +222,11 @@ namespace Flow_management
                 }
             }
         }
+
+        private void ButtonAdd_Click(object sender, RoutedEventArgs e)
+        {
+            Order order = new Order();
+            order.Show();
+        }
     }
 }
