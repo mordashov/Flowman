@@ -23,7 +23,6 @@ namespace Flow_management
         public Order()
         {
             InitializeComponent();
-            GenerateListBoxContent();
         }
 
         private void GenerateListBoxContent()
@@ -75,6 +74,7 @@ namespace Flow_management
         private void CheckBox_Checked(string chContent)
         {
             int score = int.Parse(LabelScore.Content.ToString());
+            //Кол-во баллов по обращению (вычленияю баллы которые в конце наименования в скобках)
             chContent = chContent.Substring(chContent.LastIndexOf('(') + 1, chContent.Length - chContent.LastIndexOf('(') - 2);
             score = score + int.Parse(chContent);
             LabelScore.Content = score.ToString();
@@ -84,10 +84,15 @@ namespace Flow_management
         private void CheckBox_UnChecked(string chContent)
         {
             int score = int.Parse(LabelScore.Content.ToString());
+            //Кол-во баллов по обращению (вычленияю баллы которые в конце наименования в скобках)
             chContent = chContent.Substring(chContent.LastIndexOf('(') + 1, chContent.Length - chContent.LastIndexOf('(') - 2);
             score = score - int.Parse(chContent);
             LabelScore.Content = score.ToString();
         }
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            GenerateListBoxContent();
+        }
     }
 }
