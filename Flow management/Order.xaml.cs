@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -28,32 +29,65 @@ namespace Flow_management
         private void GenerateListBoxContent()
         {
 
-            List<KeyValuePair<int, string>> list = new List<KeyValuePair<int, string>>
-            {
-                new KeyValuePair<int, string>(0, "Первый"),
-                new KeyValuePair<int, string>(1, "Второй"),
-                new KeyValuePair<int, string>(2, "Третий")
-            };
+            MsAccess acs = new MsAccess();
+            //Формирую DataTable с содержанием обращения
+            string sql = "SELECT cor.cor_id, cor.cor_cnt & ' (' & cor.cor_scr & ')' FROM cor";
+            DataTable dt = new DataTable();
+            dt = acs.CreateDataTable(sql);
 
+            //List<KeyValuePair<int, string>> list = new List<KeyValuePair<int, string>>();
 
+            //Перебираю строки в DataTable
+            int i = 0;
+            foreach (DataRow row in dt.Rows)
+            {
 
-            CheckBox ch = new CheckBox()
-            {
-                Content = list[0].Value
-        };
+                //Чекбоксы выбора содержания обращения
+                CheckBox ch = new CheckBox();
 
-            CheckBox ch1 = new CheckBox()
-            {
-                Content = list[1].Value
-            };
-            CheckBox ch2 = new CheckBox()
-            {
-                Content = list[2].Value
-            };
-            ListBoxContent.Items.Insert(0, ch);
-            ListBoxContent.Items.Insert(1, ch1);
-            ListBoxContent.Items.Insert(2, ch2);
+                //TextBox Вложенный в ChekBox
+                TextBox tb = new TextBox
+                {
+                    Text = row[1].ToString(),
+                    TextWrapping = TextWrapping.Wrap
+                };
+
+                ch.Content = tb;
+                ch.Width = 260;
+                ch.Checked += (sender, args) => { CheckBox_Checked(tb.Text); };
+                ch.Unchecked += (sender, args) => { CheckBox_UnChecked(tb.Text); };
+
+                //ChekBox добавляю в ListBox
+                ListBoxContent.Items.Insert(i, ch);
+
+                i++;
+            }
+
+            //List<KeyValuePair<int, string>> list = new List<KeyValuePair<int, string>>
+            //{
+            //    new KeyValuePair<int, string>(0, "Первый"),
+            //    new KeyValuePair<int, string>(1, "Второй"),
+            //    new KeyValuePair<int, string>(2, "Третий")
+            //};
+
+        }
+        //Действие при выборе CheckBox
+        private void CheckBox_Checked(string chContent)
+        {
+            int score = int.Parse(LabelScore.Content.ToString());
+            chContent = chContent.Substring(chContent.LastIndexOf('(') + 1, chContent.Length - chContent.LastIndexOf('(') - 2);
+            score = score + int.Parse(chContent);
+            LabelScore.Content = score.ToString();
         }
 
-}
+        //Действие при снятии галки с ChekBox
+        private void CheckBox_UnChecked(string chContent)
+        {
+            int score = int.Parse(LabelScore.Content.ToString());
+            chContent = chContent.Substring(chContent.LastIndexOf('(') + 1, chContent.Length - chContent.LastIndexOf('(') - 2);
+            score = score - int.Parse(chContent);
+            LabelScore.Content = score.ToString();
+        }
+
+    }
 }
