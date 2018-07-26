@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -22,6 +23,7 @@ namespace Flow_management
     {
 
         private DateTime _dateOrder = DateTime.Now;
+        private string _tn;
 
         public DateTime DateOrder
         {
@@ -36,6 +38,7 @@ namespace Flow_management
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            DatePickerDate.SelectedDate = _dateOrder;
             GenerateListBoxContent();
             GenerateDataGridStaff(_dateOrder);
         }
@@ -63,7 +66,8 @@ namespace Flow_management
                 TextBox tb = new TextBox
                 {
                     Text = row[1].ToString(),
-                    TextWrapping = TextWrapping.Wrap
+                    TextWrapping = TextWrapping.Wrap,
+                    BorderThickness = new Thickness(0,0,0,1)
                 };
 
                 ch.Content = tb;
@@ -86,16 +90,17 @@ namespace Flow_management
 
         }
 
+        //Генерация DataGrid с сотрудниками
         private void GenerateDataGridStaff(DateTime dateOrder)
         {
             MsAccess acs = new MsAccess();
 
-            string sql = $@"SELECT stf.stf_tn
-                , stf.stf_fln
-                , pos.pos_nm
-                , Sum(cor.cor_scr) AS [Sum-cor_scr]
-                , nrm.nrm_scr
-                , nrm.nrm_dt
+            string sql = $@"SELECT stf.stf_tn as Номер
+                , stf.stf_fln as ФИО
+                , pos.pos_nm as Должность
+                , ROUND(100*Sum(cor.cor_scr)/nrm.nrm_scr,0) as Процент
+                , Sum(cor.cor_scr) AS [Баллы]
+                , nrm.nrm_scr as Норма
             FROM(stf INNER JOIN(pos INNER JOIN((ord INNER JOIN(cor INNER JOIN app ON cor.cor_id = app.cor_id) ON ord.ord_id = app.ord_id) INNER JOIN flw ON ord.ord_id = flw.ord_id) ON pos.pos_id = flw.pos_id) ON stf.stf_tn = flw.stf_tn) INNER JOIN nrm ON stf.stf_tn = nrm.stf_tn
             GROUP BY stf.stf_tn
                 , stf.stf_fln
@@ -121,7 +126,7 @@ namespace Flow_management
             LabelScore.Content = score.ToString();
         }
 
-        //Действие при снятии галки с ChekBox
+        //Действие при снятии галки с CheckBox
         private void CheckBox_UnChecked(string chContent)
         {
             int score = int.Parse(LabelScore.Content.ToString());
@@ -131,5 +136,21 @@ namespace Flow_management
             LabelScore.Content = score.ToString();
         }
 
+        private void DataGridStaff_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            GetStaffName();
+        }
+
+        private void GetStaffName()
+        {
+            DataRowView dataRow = (DataRowView)DataGridStaff.SelectedItem;
+            string _tn = dataRow.Row.ItemArray[0].ToString();
+            LabelWorker.Content = dataRow.Row.ItemArray[1].ToString();
+        }
+
+        private void DataGridStaff_KeyUp(object sender, KeyEventArgs e)
+        {
+            GetStaffName();
+        }
     }
 }
