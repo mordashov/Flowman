@@ -25,11 +25,19 @@ namespace Flow_management
 
         private DateTime _dateOrder = DateTime.Now;
         private string _tn;
+        private string _mngTn;
+        private string _posNm;
 
         public DateTime DateOrder
         {
             get => _dateOrder;
             set => _dateOrder = value;
+        }
+
+        public string MngTn
+        {
+            get => _mngTn;
+            set => _mngTn = value;
         }
 
         public Order()
@@ -149,8 +157,9 @@ namespace Flow_management
         private void GetStaffName()
         {
             DataRowView dataRow = (DataRowView)DataGridStaff.SelectedItem;
-            string _tn = dataRow.Row.ItemArray[0].ToString();
+            _tn = dataRow.Row.ItemArray[0].ToString();
             LabelWorker.Content = dataRow.Row.ItemArray[1].ToString();
+            _posNm = dataRow.Row.ItemArray[2].ToString();
         }
 
         private void DataGridStaff_KeyUp(object sender, KeyEventArgs e)
@@ -185,6 +194,7 @@ namespace Flow_management
                 $@"INSERT INTO ord (ord_num, ord_dt) VALUES ('{ordNum}', {dt:#M-d-yyyy#} )";
             command.Transaction = transaction;
             int ordInsRows = command.ExecuteNonQuery();
+            int insFlwRows = 0;
             if (ordInsRows == 1)
             {
                 int appInsRows = 0;
@@ -209,7 +219,28 @@ namespace Flow_management
                         return;
                     }
                 }
+
+                command.CommandText =
+                    $@"INSERT INTO flw (mng_tn, ord_id, stf_tn, pos_id) 
+                        SELECT {_mngTn}
+                            , ord_id
+                            , {_tn}
+                            , (SELECT pos.pos_id FROM pos WHERE pos.pos_nm='{_posNm}') as pos
+                        FROM ord 
+                        WHERE ord_num = '{ordNum}';";
+                command.Transaction = transaction;
+                insFlwRows = command.ExecuteNonQuery();
+
             }
+
+            if (insFlwRows == 0)
+            {
+                transaction.Rollback();
+                connection.Close();
+                MessageBox.Show("Не могу привязть менеджера потока к обращению");
+                return;
+            }
+
 
             transaction.Commit();
             connection.Close();

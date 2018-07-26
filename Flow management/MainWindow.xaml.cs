@@ -227,7 +227,8 @@ namespace Flow_management
         {
             Order order = new Order
             {
-                DateOrder = DateTime.Parse(ComboBoxDate.SelectedValue.ToString())
+                DateOrder = DateTime.Parse(ComboBoxDate.SelectedValue.ToString()),
+                MngTn = ComboBoxMp.SelectedValue.ToString()
             };
             order.Show();
         }
