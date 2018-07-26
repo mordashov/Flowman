@@ -225,14 +225,12 @@ namespace Flow_management
 
         private void ButtonAdd_Click(object sender, RoutedEventArgs e)
         {
-            Order order = new Order();
+            Order order = new Order
+            {
+                DateOrder = DateTime.Parse(ComboBoxDate.SelectedValue.ToString())
+            };
             order.Show();
         }
 
-        private void DataGridRequests_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
-        {
-            if (e.PropertyType == typeof(System.DateTime))
-                (e.Column as DataGridTextColumn).Binding.StringFormat = "dd.MM.yyyy";
-        }
     }
 }

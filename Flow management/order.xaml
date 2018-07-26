@@ -19,7 +19,7 @@
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <ListBox Name="ListBoxContent" Width="300" HorizontalAlignment="Left" Margin="20,0,0,20" ></ListBox>
-            <DataGrid Width="300" Margin="20,0,0,20"></DataGrid>
+            <DataGrid Name="DataGridStaff" Width="300" Margin="20,0,0,20"></DataGrid>
 
         </StackPanel>
     </Grid>

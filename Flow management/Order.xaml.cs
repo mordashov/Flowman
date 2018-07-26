@@ -20,9 +20,24 @@ namespace Flow_management
     /// </summary>
     public partial class Order : Window
     {
+
+        private DateTime _dateOrder = DateTime.Now;
+
+        public DateTime DateOrder
+        {
+            get => _dateOrder;
+            set => _dateOrder = value;
+        }
+
         public Order()
         {
             InitializeComponent();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            GenerateListBoxContent();
+            GenerateDataGridStaff(_dateOrder);
         }
 
         private void GenerateListBoxContent()
@@ -70,6 +85,32 @@ namespace Flow_management
             //};
 
         }
+
+        private void GenerateDataGridStaff(DateTime dateOrder)
+        {
+            MsAccess acs = new MsAccess();
+
+            string sql = $@"SELECT stf.stf_tn
+                , stf.stf_fln
+                , pos.pos_nm
+                , Sum(cor.cor_scr) AS [Sum-cor_scr]
+                , nrm.nrm_scr
+                , nrm.nrm_dt
+            FROM(stf INNER JOIN(pos INNER JOIN((ord INNER JOIN(cor INNER JOIN app ON cor.cor_id = app.cor_id) ON ord.ord_id = app.ord_id) INNER JOIN flw ON ord.ord_id = flw.ord_id) ON pos.pos_id = flw.pos_id) ON stf.stf_tn = flw.stf_tn) INNER JOIN nrm ON stf.stf_tn = nrm.stf_tn
+            GROUP BY stf.stf_tn
+                , stf.stf_fln
+                , pos.pos_nm
+                , nrm.nrm_scr
+                , nrm.nrm_dt
+                , ord.ord_dt
+            HAVING nrm.nrm_dt = {dateOrder:#M-d-yyyy#} AND ord.ord_dt = {dateOrder:#M-d-yyyy#};
+                ";
+
+            DataTable dt = acs.CreateDataTable(sql);
+
+            DataGridStaff.ItemsSource = dt.DefaultView;
+        }
+
         //Действие при выборе CheckBox
         private void CheckBox_Checked(string chContent)
         {
@@ -90,9 +131,5 @@ namespace Flow_management
             LabelScore.Content = score.ToString();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            GenerateListBoxContent();
-        }
     }
 }
