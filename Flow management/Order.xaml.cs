@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Data.OleDb;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -67,9 +68,10 @@ namespace Flow_management
                 {
                     Text = row[1].ToString(),
                     TextWrapping = TextWrapping.Wrap,
-                    BorderThickness = new Thickness(0,0,0,1)
+                    BorderThickness = new Thickness(0,0,0,0),
                 };
 
+                ch.Tag = row[0].ToString();
                 ch.Content = tb;
                 ch.Width = 260;
                 ch.Checked += (sender, args) => { CheckBox_Checked(tb.Text); };
@@ -77,6 +79,8 @@ namespace Flow_management
 
                 //ChekBox добавляю в ListBox
                 ListBoxContent.Items.Insert(i, ch);
+
+                //ListBoxContent.ItemTemplate.Template = new Thickness(0,0,0,1);
 
                 i++;
             }
@@ -108,7 +112,8 @@ namespace Flow_management
                 , nrm.nrm_scr
                 , nrm.nrm_dt
                 , ord.ord_dt
-            HAVING nrm.nrm_dt = {dateOrder:#M-d-yyyy#} AND ord.ord_dt = {dateOrder:#M-d-yyyy#};
+            HAVING nrm.nrm_dt = {dateOrder:#M-d-yyyy#} AND ord.ord_dt = {dateOrder:#M-d-yyyy#}
+            ORDER BY ROUND(100*Sum(cor.cor_scr)/nrm.nrm_scr,0);
                 ";
 
             DataTable dt = acs.CreateDataTable(sql);
@@ -151,6 +156,64 @@ namespace Flow_management
         private void DataGridStaff_KeyUp(object sender, KeyEventArgs e)
         {
             GetStaffName();
+        }
+
+        private void ButtonAdd_Click(object sender, RoutedEventArgs e)
+        {
+            MsAccess acs = new MsAccess();
+
+            string ordNum = TextBoxNumber.Text;
+            if (string.IsNullOrEmpty(ordNum) || ordNum == "Номер")
+            {
+                MessageBox.Show("Неверно указан номер");
+                return;
+            }
+
+            string worker = LabelWorker.Content.ToString();
+            if (string.IsNullOrEmpty(worker) || worker == "Сотрудник")
+            {
+                MessageBox.Show("Неверно указан сотрудник");
+                return;
+            }
+
+            DateTime dt = (DateTime) DatePickerDate.SelectedDate;
+
+            OleDbConnection connection = acs.CreateConnection();
+            OleDbTransaction transaction = connection.BeginTransaction();
+            OleDbCommand command = connection.CreateCommand();
+            command.CommandText =
+                $@"INSERT INTO ord (ord_num, ord_dt) VALUES ('{ordNum}', {dt:#M-d-yyyy#} )";
+            command.Transaction = transaction;
+            int ordInsRows = command.ExecuteNonQuery();
+            if (ordInsRows == 1)
+            {
+                int appInsRows = 0;
+                foreach (var child in ListBoxContent.Items)
+                {
+                    if (child is CheckBox)
+                    {
+                        if (((CheckBox) child).IsChecked == true)
+                        {
+                            string corId = ((CheckBox)child).Tag.ToString();
+                            command.CommandText =
+                                $@"INSERT INTO app (ord_id, cor_id) SELECT ord_id, '{corId}' FROM ord WHERE ord_num = '{ordNum}';";
+                            command.Transaction = transaction;
+                            appInsRows = command.ExecuteNonQuery();
+                        }
+
+                    }
+                    if (appInsRows == 0) {
+                        transaction.Rollback();
+                        connection.Close();
+                        MessageBox.Show("Выберите содержание заявки");
+                        return;
+                    }
+                }
+            }
+
+            transaction.Commit();
+            connection.Close();
+            this.Close();
         }
     }
 }
