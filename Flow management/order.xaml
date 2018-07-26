@@ -1,0 +1,26 @@
+﻿<Window x:Class="Flow_management.Order"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Flow_management"
+        mc:Ignorable="d"
+        Title="Обращение" Height="450" Width="800" Loaded="Window_Loaded">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="100*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <TextBox Name="TextBoxNumber" Height="40" Width="100" Text="Номер" Margin="20,0,0,0" VerticalContentAlignment="Center" FontSize="16"></TextBox>
+            <DatePicker Name="DatePickerDate" Height="40" Width="130" Margin="20,0,0,0" VerticalContentAlignment="Center" FontSize="16"/>
+            <Label Name="LabelWorker" Height="40" Width="200" Content="Сотрудник" Margin="20,0,0,0" VerticalContentAlignment="Center" FontSize="16" IsEnabled="False"></Label>
+            <Label Name="LabelScore" Height="40" Width="50" Content="0" Margin="20,0,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="16" IsEnabled="False"></Label>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <ListBox Name="ListBoxContent" Width="300" HorizontalAlignment="Left" Margin="20,0,0,20" ></ListBox>
+            <DataGrid Width="300" Margin="20,0,0,20"></DataGrid>
+
+        </StackPanel>
+    </Grid>
+</Window>

@@ -16,11 +16,13 @@
         </Grid.RowDefinitions>
         <Label Grid.Row="0" Content="Распределение обращений" FontSize="40" HorizontalAlignment="Left" Margin="303,-2,0,0" VerticalAlignment="Top"/>
         <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Label x:Name="LabelMonth" Content="Месяц" VerticalAlignment="Center" FontSize="16" Margin="20,0,0,0"/>
+            <!--<Label x:Name="LabelMonth" Content="Месяц" VerticalAlignment="Center" FontSize="16" Margin="20,0,0,0"/>
             <ComboBox x:Name="ComboBoxMonth" Width="100" Height="30" VerticalAlignment="Center" FontSize="16"  Margin="10,0,0,0" DropDownClosed="ComboBoxMonth_DropDownClosed" KeyUp="ComboBoxMonth_KeyUp"></ComboBox>
             <Label x:Name="LabelYear" Content="Год" VerticalAlignment="Center" FontSize="16" Margin="20,0,0,0"/>
-            <ComboBox x:Name="ComboBoxYear" Width="70" Height="30" VerticalAlignment="Center"  Margin="10,0,0,0" FontSize="16" DisplayMemberPath="Год" SelectedValuePath="Год" DropDownClosed="ComboBoxYear_DropDownClosed" KeyUp="ComboBoxYear_KeyUp"></ComboBox>
-            <Label Content="МП" FontSize="16" VerticalAlignment="Center"  Margin="20,0,0,0"/>
+            <ComboBox x:Name="ComboBoxYear" Width="70" Height="30" VerticalAlignment="Center"  Margin="10,0,0,0" FontSize="16" DisplayMemberPath="Год" SelectedValuePath="Год" DropDownClosed="ComboBoxYear_DropDownClosed" KeyUp="ComboBoxYear_KeyUp"></ComboBox>-->
+            <Label Content="Дата" FontSize="16" VerticalAlignment="Center" Margin="20,0,0,0" />
+            <ComboBox Name="ComboBoxDate" FontSize="16" Width="110" Height="30" VerticalAlignment="Center" Margin="10,0,0,0" ItemsSource="{Binding}" DisplayMemberPath="date" SelectedValuePath="date" DropDownClosed="ComboBoxDate_DropDownClosed" KeyUp="ComboBoxDate_KeyUp"/>
+            <Label Content="МП" FontSize="16" VerticalAlignment="Center"  Margin="20,0,0,0" />
             <ComboBox x:Name="ComboBoxMp" Width="300" Height="30" VerticalAlignment="Center"  Margin="10,0,0,0" ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="id" FontSize="16" DropDownClosed="ComboBoxMp_DropDownClosed" KeyUp="ComboBoxMp_KeyUp"/>
             <Label Content="Кол-во обращений:" FontSize="16" VerticalAlignment="Center"  Margin="20,0,0,0"/>
             <Label Name="LabelRequestsCount" Content="0/0" FontSize="16" VerticalAlignment="Center"  Margin="10,0,0,0" Width="50"/>
@@ -29,7 +31,7 @@
         </StackPanel>
         <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Bottom">
             <Label  Content="Обращения"  HorizontalAlignment="Left" FontSize="20" FontWeight="Bold" Margin="20,0,0,0" Width="150" />
-            <Button Width="93" Height="30" FontSize="16" Content="Добавить" Margin="20,0,0,0" HorizontalAlignment="Left"></Button>
+            <Button Name="ButtonAdd" Width="93" Height="30" FontSize="16" Content="Добавить" Margin="20,0,0,0" HorizontalAlignment="Left" Click="ButtonAdd_Click" ></Button>
         </StackPanel>
         <DataGrid Name="DataGridRequests" Grid.Row="3" Margin="20,0,20,40" ItemsSource="{Binding}" IsReadOnly="True" AutoGeneratingColumn="DataGridRequests_AutoGeneratingColumn" />
     </Grid>
