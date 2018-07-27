@@ -107,22 +107,47 @@ namespace Flow_management
         {
             MsAccess acs = new MsAccess();
 
-            string sql = $@"SELECT stf.stf_tn as Номер
-                , stf.stf_fln as ФИО
-                , pos.pos_nm as Должность
-                , ROUND(100*Sum(cor.cor_scr)/nrm.nrm_scr,0) as Процент
-                , Sum(cor.cor_scr) AS [Баллы]
-                , nrm.nrm_scr as Норма
-            FROM(stf INNER JOIN(pos INNER JOIN((ord INNER JOIN(cor INNER JOIN app ON cor.cor_id = app.cor_id) ON ord.ord_id = app.ord_id) INNER JOIN flw ON ord.ord_id = flw.ord_id) ON pos.pos_id = flw.pos_id) ON stf.stf_tn = flw.stf_tn) INNER JOIN nrm ON stf.stf_tn = nrm.stf_tn
-            GROUP BY stf.stf_tn
-                , stf.stf_fln
-                , pos.pos_nm
-                , nrm.nrm_scr
-                , nrm.nrm_dt
-                , ord.ord_dt
-            HAVING nrm.nrm_dt = {dateOrder:#M-d-yyyy#} AND ord.ord_dt = {dateOrder:#M-d-yyyy#}
-            ORDER BY ROUND(100*Sum(cor.cor_scr)/nrm.nrm_scr,0);
-                ";
+            //string sql = $@"SELECT stf.stf_tn as Номер
+            //    , stf.stf_fln as ФИО
+            //    , pos.pos_nm as Должность
+            //    , ROUND(100*Sum(cor.cor_scr)/nrm.nrm_scr,0) as Процент
+            //    , Sum(cor.cor_scr) AS [Баллы]
+            //    , nrm.nrm_scr as Норма
+            //FROM(stf INNER JOIN(pos INNER JOIN((ord INNER JOIN(cor INNER JOIN app ON cor.cor_id = app.cor_id) ON ord.ord_id = app.ord_id) INNER JOIN flw ON ord.ord_id = flw.ord_id) ON pos.pos_id = flw.pos_id) ON stf.stf_tn = flw.stf_tn) INNER JOIN nrm ON stf.stf_tn = nrm.stf_tn
+            //GROUP BY stf.stf_tn
+            //    , stf.stf_fln
+            //    , pos.pos_nm
+            //    , nrm.nrm_scr
+            //    , nrm.nrm_dt
+            //    , ord.ord_dt
+            //HAVING nrm.nrm_dt = {dateOrder:#M-d-yyyy#} AND ord.ord_dt = {dateOrder:#M-d-yyyy#}
+            //ORDER BY ROUND(100*Sum(cor.cor_scr)/nrm.nrm_scr,0);
+            //    ";
+
+            string sql = $@"
+                    SELECT 
+                        nrm.stf_tn AS Номер
+                        , stf.stf_fln AS ФИО
+                        , pos.pos_nm AS Должность
+                        , dep.dep_mn AS Отдел
+                        , IIf(IsNull(Sum([cor].[cor_scr])),0,Round(100*Sum([cor].[cor_scr])/[nrm].[nrm_scr],0)) AS Процент
+                        , Sum(cor.cor_scr) AS Баллы, nrm.nrm_scr AS Норма
+                    FROM (pos INNER JOIN (dep INNER JOIN stf ON dep.dep_id = stf.dep_id) ON pos.pos_id = stf.pos_id) INNER JOIN ((ord LEFT JOIN (cor RIGHT JOIN app ON cor.cor_id = app.cor_id) ON ord.ord_id = app.ord_id) RIGHT JOIN (nrm LEFT JOIN flw ON nrm.stf_tn = flw.stf_tn) ON ord.ord_id = flw.ord_id) ON stf.stf_tn = nrm.stf_tn
+                    GROUP BY 
+                        nrm.stf_tn
+                        , stf.stf_fln
+                        , pos.pos_nm
+                        , dep.dep_mn
+                        , nrm.nrm_scr
+                        , nrm.nrm_dt
+                        , dep.dep_mn
+                        , stf.stf_fln
+                    HAVING nrm.nrm_dt = {dateOrder:#M-d-yyyy#}
+                    ORDER BY 
+                        IIf(IsNull(Sum([cor].[cor_scr])),0,Round(100*Sum([cor].[cor_scr])/[nrm].[nrm_scr],0))
+                        , dep.dep_mn
+                        , stf.stf_fln
+                    ";
 
             DataTable dt = acs.CreateDataTable(sql);
 

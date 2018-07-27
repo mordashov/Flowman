@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Flow_management"
         mc:Ignorable="d"
-        Title="Обращение" Height="450" Width="900" Loaded="Window_Loaded">
+        Title="Обращение" Height="450" Width="1000" Loaded="Window_Loaded">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
@@ -20,7 +20,7 @@
         </StackPanel>
         <StackPanel Name="StackPanelAppears" Grid.Row="1" Orientation="Horizontal">
             <ListBox Name="ListBoxContent" Width="300" HorizontalAlignment="Left" Margin="20,0,0,20" ></ListBox>
-            <DataGrid Name="DataGridStaff" Width="527" Margin="20,0,0,20" IsReadOnly="True" MouseUp="DataGridStaff_MouseUp" KeyUp="DataGridStaff_KeyUp"></DataGrid>
+            <DataGrid Name="DataGridStaff" Width="620" Margin="20,0,0,20" IsReadOnly="True" MouseUp="DataGridStaff_MouseUp" KeyUp="DataGridStaff_KeyUp"></DataGrid>
 
         </StackPanel>
     </Grid>
