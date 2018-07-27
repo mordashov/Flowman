@@ -237,13 +237,15 @@ namespace Flow_management
                         }
 
                     }
-                    if (appInsRows == 0) {
-                        transaction.Rollback();
-                        connection.Close();
-                        MessageBox.Show("Выберите содержание заявки");
-                        return;
-                    }
                 }
+                if (appInsRows == 0)
+                {
+                    transaction.Rollback();
+                    connection.Close();
+                    MessageBox.Show("Выберите содержание заявки");
+                    return;
+                }
+
 
                 command.CommandText =
                     $@"INSERT INTO flw (mng_tn, ord_id, stf_tn, pos_id) 

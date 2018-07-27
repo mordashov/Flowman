@@ -183,6 +183,7 @@ namespace Flow_management
                                 ON ord.ord_id = flw.ord_id) 
                                 ON pos.pos_id = flw.pos_id) ON stf.stf_tn = flw.stf_tn
                             WHERE ord.ord_dt = #{dt:M-d-yyyy}# AND mng.mng_tn LIKE '{tn}'
+                            ORDER BY ord.ord_id DESC
                             ";
             GenerateDataGridReq(sql);
         }
@@ -230,7 +231,8 @@ namespace Flow_management
                 DateOrder = DateTime.Parse(ComboBoxDate.SelectedValue.ToString()),
                 MngTn = ComboBoxMp.SelectedValue.ToString()
             };
-            order.Show();
+            order.ShowDialog();
+            DataGridReqReload();
         }
 
     }
