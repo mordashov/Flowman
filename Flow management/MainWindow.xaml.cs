@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.OleDb;
 using System.Linq;
 using System.Text;
@@ -280,6 +281,99 @@ namespace Flow_management
             GenerateComboBoxMp(sql);
 
             DataGridReqReload();
+
+            //пересчет кол-ва обращений и баллов
+            CountRequestsMp();
+        }
+
+        private void ButtonDel_Click(object sender, RoutedEventArgs e)
+        {
+
+            //Удаление обращения
+            MsAccess acs = new MsAccess();
+
+            DataRowView dataRow = (DataRowView)DataGridRequests.SelectedItem;
+            
+            //Получаю номер заявки
+            string ordNum = dataRow.Row.ItemArray[1].ToString();
+            
+            //Получаю дату заявки
+            DateTime ordDt = (DateTime)dataRow.Row.ItemArray[2];
+
+            //Формирую предупреждающее сообщение
+            MessageBoxResult msg = MessageBox.Show(
+                messageBoxText: $"Будет удалено обращение {ordNum} от {ordDt:MM.dd.yyyy}\nПродолжить?"
+                , caption: "Внимание"
+                , button: MessageBoxButton.YesNo);
+            if (msg == MessageBoxResult.No) return;
+
+            //Удаляю заявку из трех таблиц
+            OleDbConnection connection = acs.CreateConnection();
+            OleDbTransaction transaction = connection.BeginTransaction();
+            OleDbCommand command = connection.CreateCommand();
+            command.CommandText =
+                $@"DELETE flw.* FROM ord INNER JOIN flw ON ord.ord_id = flw.ord_id WHERE ord.ord_num=""{ordNum}"";";
+            command.Transaction = transaction;
+            int ordDelRows = 0;
+            
+            //Удаляю из flw
+            try
+            {
+                ordDelRows = command.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+
+                MessageBox.Show("Не могу удалить обращение из таблицы flw");
+                transaction.Rollback();
+                return;
+            }
+
+            command.CommandText =
+                $@"DELETE app.* FROM ord INNER JOIN app ON ord.ord_id = app.ord_id WHERE ord.ord_num=""{ordNum}"";";
+            command.Transaction = transaction;
+            
+            //Удаляю из app
+            try
+            {
+                ordDelRows = command.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+
+                MessageBox.Show("Не могу удалить содержание обращения из таблицы app");
+                transaction.Rollback();
+                return;
+            }
+
+            command.CommandText =
+                $@"DELETE ord.* FROM ord  WHERE ord.ord_num=""{ordNum}"";";
+            command.Transaction = transaction;
+
+            //Удаляю из ord
+            try
+            {
+                ordDelRows = command.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+
+                MessageBox.Show("Не могу удалить обращение из таблицы ord");
+                transaction.Rollback();
+                return;
+            }
+
+            //Подтверждаю транзакцию если все в порядке
+            transaction.Commit();
+            connection.Close();
+
+            //Обновление DataGrid
+            DataGridReqReload();
+
+            //Подсчет кол-ва обращений
+            CountRequestsMp();
+
+
         }
     }
 }
