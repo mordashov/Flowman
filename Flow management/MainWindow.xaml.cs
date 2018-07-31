@@ -272,6 +272,7 @@ namespace Flow_management
             };
             order.ShowDialog();
             DataGridReqReload();
+            CountRequestsMp();
         }
 
         private void ButtonRefresh_Click(object sender, RoutedEventArgs e)
