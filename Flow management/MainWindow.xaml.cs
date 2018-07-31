@@ -257,6 +257,13 @@ namespace Flow_management
 
         private void ButtonAdd_Click(object sender, RoutedEventArgs e)
         {
+            if (ComboBoxMp.SelectedValue == null)
+            {
+                MessageBox.Show("Выберите менеджера потока");
+                return;
+
+            }
+
             Order order = new Order
             {
                 DateOrder = DateTime.Parse(ComboBoxDate.SelectedValue.ToString()),

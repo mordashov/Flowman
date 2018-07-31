@@ -140,9 +140,10 @@ namespace Flow_management
                         , dep.dep_mn
                         , nrm.nrm_scr
                         , nrm.nrm_dt
+                        , ord.ord_dt
                         , dep.dep_mn
                         , stf.stf_fln
-                    HAVING nrm.nrm_dt = {dateOrder:#M-d-yyyy#}
+                    HAVING nrm.nrm_dt = {dateOrder:#M-d-yyyy#} AND (ord.ord_dt = {dateOrder:#M-d-yyyy#} OR ord.ord_dt IS NULL)
                     ORDER BY 
                         IIf(IsNull(Sum([cor].[cor_scr])),0,Round(100*Sum([cor].[cor_scr])/[nrm].[nrm_scr],0))
                         , dep.dep_mn
