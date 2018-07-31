@@ -218,7 +218,18 @@ namespace Flow_management
             command.CommandText =
                 $@"INSERT INTO ord (ord_num, ord_dt) VALUES ('{ordNum}', {dt:#M-d-yyyy#} )";
             command.Transaction = transaction;
-            int ordInsRows = command.ExecuteNonQuery();
+            int ordInsRows = 0;
+
+            try
+            {
+                ordInsRows = command.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Ошибка вставки данных. Проверьте данные и повторите попытку.");
+                return;
+            }
+
             int insFlwRows = 0;
             if (ordInsRows == 1)
             {

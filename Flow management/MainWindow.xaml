@@ -31,8 +31,10 @@
         </StackPanel>
         <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Bottom">
             <Label  Content="Обращения"  HorizontalAlignment="Left" FontSize="20" FontWeight="Bold" Margin="20,0,0,0" Width="150" />
-            <Button Name="ButtonAdd" Width="150" Height="30" FontSize="16" Content="Новое обращение" Margin="20,0,0,0" HorizontalAlignment="Left" Click="ButtonAdd_Click" ></Button>
+            <Button Name="ButtonAdd" Width="100" Height="30" FontSize="16" Content="Новое" Margin="20,0,0,0" HorizontalAlignment="Left" Click="ButtonAdd_Click" ></Button>
+            <Button Name="ButtonDel" Content="Удалить" Width="100" Height="30" FontSize="16" Margin="20,0,0,0" HorizontalAlignment="Left" />
+            <Button Name="ButtonRefresh" Content="Обновить" Width="100" Height="30" FontSize="16" Margin="20,0,0,0" HorizontalAlignment="Left" Click="ButtonRefresh_Click" />
         </StackPanel>
-        <DataGrid Name="DataGridRequests" Grid.Row="3" Margin="20,0,20,40" ItemsSource="{Binding}" IsReadOnly="True" AutoGeneratingColumn="DataGridRequests_AutoGeneratingColumn" />
+        <DataGrid Name="DataGridRequests" Grid.Row="3" Margin="20,0,20,40" ItemsSource="{Binding}" IsReadOnly="True" AutoGeneratingColumn="DataGridRequests_AutoGeneratingColumn" FontSize="14" />
     </Grid>
 </Window>

@@ -99,7 +99,6 @@ namespace Flow_management
             sql = "SELECT mng.mng_tn as id, mng.mng_fln as Name FROM mng; ";
             GenerateComboBoxMp(sql);
 
-
             //Подсчет кол-ва обращений
             CountRequestsMp();
         }
@@ -174,10 +173,6 @@ namespace Flow_management
                             , stf.stf_fln AS Сотрудник
                             , pos.pos_nm AS Должность
                             , dep.dep_mn AS Отдел
-                            , """" AS Норма
-                            , """" AS Итого
-                            , """" AS [Норма отдела]
-                            , """" AS [Итого по отделу]
                             FROM (dep INNER JOIN stf ON dep.dep_id = stf.dep_id) 
                                 INNER JOIN (pos INNER JOIN (ord INNER JOIN (mng INNER JOIN flw ON mng.mng_tn = flw.mng_tn) 
                                 ON ord.ord_id = flw.ord_id) 
@@ -212,6 +207,17 @@ namespace Flow_management
             CountRequestsMp();
         }
 
+        private int ColumnWith(int colWith)
+        {
+            //Эталонная сумма всех столбцов. Это сумма ширины всех колонок заданных в list
+            double AllWidth = 1140;
+            //Отношение эталона к оригиналу
+            double dgRat = DataGridRequests.ActualWidth / AllWidth;
+            //Ширина колонки умноженное на отношение эталона к оригиналу
+            double result = colWith * dgRat;
+            return Convert.ToInt32(result);
+        }
+
         private void DataGridRequests_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
             //Изменение формата колонки Дата в DataGridRequests
@@ -222,6 +228,31 @@ namespace Flow_management
                     if (column.Binding is Binding binding) binding.StringFormat = "dd.MM.yyyy";
                 }
             }
+
+            //Изменение ширины колонок
+            List<KeyValuePair<string, int>> list = new List<KeyValuePair<string, int>>
+            {
+                new KeyValuePair<string, int>("МП", ColumnWith(300)),
+                new KeyValuePair<string, int>("Обращение", ColumnWith(140)),
+                new KeyValuePair<string, int>("Дата", ColumnWith(100)),
+                new KeyValuePair<string, int>("Сотрудник", ColumnWith(300)),
+                new KeyValuePair<string, int>("Должность", ColumnWith(200)),
+                new KeyValuePair<string, int>("Отдел", ColumnWith(100))
+            };
+
+            foreach (var itemPair in list)
+            {
+                if (e.PropertyName == itemPair.Key)
+                {
+                    if (e.Column is DataGridTextColumn column)
+                    {
+                        column.Width = itemPair.Value;
+                    }
+                }
+            }
+
+
+
         }
 
         private void ButtonAdd_Click(object sender, RoutedEventArgs e)
@@ -235,5 +266,13 @@ namespace Flow_management
             DataGridReqReload();
         }
 
+        private void ButtonRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            //Формирование списка менеджеров
+            string sql = "SELECT mng.mng_tn as id, mng.mng_fln as Name FROM mng; ";
+            GenerateComboBoxMp(sql);
+
+            DataGridReqReload();
+        }
     }
 }
