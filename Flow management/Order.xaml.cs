@@ -47,6 +47,7 @@ namespace Flow_management
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+
             DatePickerDate.SelectedDate = _dateOrder;
             GenerateListBoxContent();
             GenerateDataGridStaff(_dateOrder);
@@ -107,49 +108,57 @@ namespace Flow_management
         {
             MsAccess acs = new MsAccess();
 
-            //string sql = $@"SELECT stf.stf_tn as Номер
-            //    , stf.stf_fln as ФИО
-            //    , pos.pos_nm as Должность
-            //    , ROUND(100*Sum(cor.cor_scr)/nrm.nrm_scr,0) as Процент
-            //    , Sum(cor.cor_scr) AS [Баллы]
-            //    , nrm.nrm_scr as Норма
-            //FROM(stf INNER JOIN(pos INNER JOIN((ord INNER JOIN(cor INNER JOIN app ON cor.cor_id = app.cor_id) ON ord.ord_id = app.ord_id) INNER JOIN flw ON ord.ord_id = flw.ord_id) ON pos.pos_id = flw.pos_id) ON stf.stf_tn = flw.stf_tn) INNER JOIN nrm ON stf.stf_tn = nrm.stf_tn
-            //GROUP BY stf.stf_tn
-            //    , stf.stf_fln
-            //    , pos.pos_nm
-            //    , nrm.nrm_scr
-            //    , nrm.nrm_dt
-            //    , ord.ord_dt
-            //HAVING nrm.nrm_dt = {dateOrder:#M-d-yyyy#} AND ord.ord_dt = {dateOrder:#M-d-yyyy#}
-            //ORDER BY ROUND(100*Sum(cor.cor_scr)/nrm.nrm_scr,0);
-            //    ";
+            //string sql = $@"
+            //        SELECT 
+            //            nrm.stf_tn AS Номер
+            //            , stf.stf_fln AS ФИО
+            //            , pos.pos_nm AS Должность
+            //            , dep.dep_mn AS Отдел
+            //            , IIf(IsNull(Sum([cor].[cor_scr])),0,Round(100*Sum([cor].[cor_scr])/[nrm].[nrm_scr],0)) AS Процент
+            //            , Sum(cor.cor_scr) AS Баллы, nrm.nrm_scr AS Норма
+            //        FROM (pos INNER JOIN (dep INNER JOIN stf ON dep.dep_id = stf.dep_id) ON pos.pos_id = stf.pos_id) INNER JOIN ((ord LEFT JOIN (cor RIGHT JOIN app ON cor.cor_id = app.cor_id) ON ord.ord_id = app.ord_id) RIGHT JOIN (nrm LEFT JOIN flw ON nrm.stf_tn = flw.stf_tn) ON ord.ord_id = flw.ord_id) ON stf.stf_tn = nrm.stf_tn
+            //        GROUP BY 
+            //            nrm.stf_tn
+            //            , stf.stf_fln
+            //            , pos.pos_nm
+            //            , dep.dep_mn
+            //            , nrm.nrm_scr
+            //            , nrm.nrm_dt
+            //            , ord.ord_dt
+            //            , dep.dep_mn
+            //            , stf.stf_fln
+            //        HAVING nrm.nrm_dt = {dateOrder:#M-d-yyyy#} AND (ord.ord_dt = {dateOrder:#M-d-yyyy#} OR ord.ord_dt IS NULL)
+            //        ORDER BY 
+            //            IIf(IsNull(Sum([cor].[cor_scr])),0,Round(100*Sum([cor].[cor_scr])/[nrm].[nrm_scr],0))
+            //            , dep.dep_mn
+            //            , stf.stf_fln
+            //        ";
 
             string sql = $@"
-                    SELECT 
-                        nrm.stf_tn AS Номер
-                        , stf.stf_fln AS ФИО
-                        , pos.pos_nm AS Должность
-                        , dep.dep_mn AS Отдел
-                        , IIf(IsNull(Sum([cor].[cor_scr])),0,Round(100*Sum([cor].[cor_scr])/[nrm].[nrm_scr],0)) AS Процент
-                        , Sum(cor.cor_scr) AS Баллы, nrm.nrm_scr AS Норма
-                    FROM (pos INNER JOIN (dep INNER JOIN stf ON dep.dep_id = stf.dep_id) ON pos.pos_id = stf.pos_id) INNER JOIN ((ord LEFT JOIN (cor RIGHT JOIN app ON cor.cor_id = app.cor_id) ON ord.ord_id = app.ord_id) RIGHT JOIN (nrm LEFT JOIN flw ON nrm.stf_tn = flw.stf_tn) ON ord.ord_id = flw.ord_id) ON stf.stf_tn = nrm.stf_tn
-                    GROUP BY 
-                        nrm.stf_tn
-                        , stf.stf_fln
-                        , pos.pos_nm
-                        , dep.dep_mn
-                        , nrm.nrm_scr
-                        , nrm.nrm_dt
-                        , ord.ord_dt
-                        , dep.dep_mn
-                        , stf.stf_fln
-                    HAVING nrm.nrm_dt = {dateOrder:#M-d-yyyy#} AND (ord.ord_dt = {dateOrder:#M-d-yyyy#} OR ord.ord_dt IS NULL)
-                    ORDER BY 
-                        IIf(IsNull(Sum([cor].[cor_scr])),0,Round(100*Sum([cor].[cor_scr])/[nrm].[nrm_scr],0))
-                        , dep.dep_mn
-                        , stf.stf_fln
+                    SELECT nrm.stf_tn AS Номер
+                    , stf.stf_fln AS ФИО
+                    , pos.pos_nm AS Должность
+                    , dep.dep_mn AS Отдел, mde.mde_nm AS Время
+                    , stf.stf_tb AS Банки
+                    , IIf(IsNull(Sum([cor].[cor_scr])),0,Round(100*Sum([cor].[cor_scr])/[nrm].[nrm_scr],0)) AS Процент
+                    , Sum(cor.cor_scr) AS Баллы, nrm.nrm_scr AS Норма
+                    FROM mde INNER JOIN ((pos INNER JOIN (dep INNER JOIN stf ON dep.dep_id = stf.dep_id) ON pos.pos_id = stf.pos_id) INNER JOIN ((ord LEFT JOIN (cor RIGHT JOIN app ON cor.cor_id = app.cor_id) ON ord.ord_id = app.ord_id) RIGHT JOIN (nrm LEFT JOIN flw ON nrm.stf_tn = flw.stf_tn) ON ord.ord_id = flw.ord_id) ON stf.stf_tn = nrm.stf_tn) ON mde.mde_id = stf.mde_id
+                    GROUP BY nrm.stf_tn
+                    , stf.stf_fln
+                    , pos.pos_nm
+                    , dep.dep_mn
+                    , mde.mde_nm
+                    , stf.stf_tb
+                    , nrm.nrm_scr
+                    , nrm.nrm_dt
+                    , ord.ord_dt
+                    , dep.dep_mn
+                    , stf.stf_fln
+                    HAVING (((nrm.nrm_dt)={dateOrder:#M-d-yyyy#}) AND ((ord.ord_dt)={dateOrder:#M-d-yyyy#} Or (ord.ord_dt) Is Null))
+                    ORDER BY IIf(IsNull(Sum([cor].[cor_scr])),0,Round(100*Sum([cor].[cor_scr])/[nrm].[nrm_scr],0))
+                    , dep.dep_mn
+                    , stf.stf_fln;
                     ";
-
             DataTable dt = acs.CreateDataTable(sql);
 
             DataGridStaff.ItemsSource = dt.DefaultView;
@@ -284,6 +293,16 @@ namespace Flow_management
             transaction.Commit();
             connection.Close();
             this.Close();
+        }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            DataGridStaff.Width = Width - 340;
+        }
+
+        private void Window_StateChanged(object sender, EventArgs e)
+        {
+            DataGridStaff.Width = 0;
         }
     }
 }
