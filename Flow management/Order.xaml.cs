@@ -297,12 +297,20 @@ namespace Flow_management
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            DataGridStaff.Width = Width - 340;
+            if (WindowState == WindowState.Normal)
+                DataGridStaff.Width = Width - 340;
         }
 
         private void Window_StateChanged(object sender, EventArgs e)
         {
-            DataGridStaff.Width = 0;
+            switch (this.WindowState)
+
+            {
+                case WindowState.Maximized:
+                    //DataGridStaff.Height = SystemParameters.PrimaryScreenHeight - 100;
+                    DataGridStaff.Width = SystemParameters.PrimaryScreenWidth - 360;
+                    break;
+            }
         }
     }
 }

@@ -20,7 +20,7 @@
         </StackPanel>
         <StackPanel Name="StackPanelAppears" Grid.Row="1" Orientation="Horizontal">
             <ListBox Name="ListBoxContent" Width="300" HorizontalAlignment="Left" Margin="20,0,0,20" ></ListBox>
-            <DataGrid Name="DataGridStaff" Width="830" Margin="20,0,0,20" IsReadOnly="True" MouseUp="DataGridStaff_MouseUp" KeyUp="DataGridStaff_KeyUp"></DataGrid>
+            <DataGrid Name="DataGridStaff" Width="830" Margin="20,0,0,20" IsReadOnly="True" MouseUp="DataGridStaff_MouseUp" KeyUp="DataGridStaff_KeyUp"/>
         </StackPanel>
     </Grid>
 </Window>
