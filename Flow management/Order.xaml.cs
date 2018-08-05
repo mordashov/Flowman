@@ -108,32 +108,6 @@ namespace Flow_management
         {
             MsAccess acs = new MsAccess();
 
-            //string sql = $@"
-            //        SELECT 
-            //            nrm.stf_tn AS Номер
-            //            , stf.stf_fln AS ФИО
-            //            , pos.pos_nm AS Должность
-            //            , dep.dep_mn AS Отдел
-            //            , IIf(IsNull(Sum([cor].[cor_scr])),0,Round(100*Sum([cor].[cor_scr])/[nrm].[nrm_scr],0)) AS Процент
-            //            , Sum(cor.cor_scr) AS Баллы, nrm.nrm_scr AS Норма
-            //        FROM (pos INNER JOIN (dep INNER JOIN stf ON dep.dep_id = stf.dep_id) ON pos.pos_id = stf.pos_id) INNER JOIN ((ord LEFT JOIN (cor RIGHT JOIN app ON cor.cor_id = app.cor_id) ON ord.ord_id = app.ord_id) RIGHT JOIN (nrm LEFT JOIN flw ON nrm.stf_tn = flw.stf_tn) ON ord.ord_id = flw.ord_id) ON stf.stf_tn = nrm.stf_tn
-            //        GROUP BY 
-            //            nrm.stf_tn
-            //            , stf.stf_fln
-            //            , pos.pos_nm
-            //            , dep.dep_mn
-            //            , nrm.nrm_scr
-            //            , nrm.nrm_dt
-            //            , ord.ord_dt
-            //            , dep.dep_mn
-            //            , stf.stf_fln
-            //        HAVING nrm.nrm_dt = {dateOrder:#M-d-yyyy#} AND (ord.ord_dt = {dateOrder:#M-d-yyyy#} OR ord.ord_dt IS NULL)
-            //        ORDER BY 
-            //            IIf(IsNull(Sum([cor].[cor_scr])),0,Round(100*Sum([cor].[cor_scr])/[nrm].[nrm_scr],0))
-            //            , dep.dep_mn
-            //            , stf.stf_fln
-            //        ";
-
             string sql = $@"
                     SELECT nrm.stf_tn AS Номер
                     , stf.stf_fln AS ФИО
@@ -312,6 +286,16 @@ namespace Flow_management
                     DataGridStaff.Width = SystemParameters.PrimaryScreenWidth - 360;
                     break;
             }
+        }
+
+        private void DataGridStaff_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            //Изменение формата колонки Дата в DataGridRequests
+            if (e.PropertyName == "Номер")
+            {
+                e.Column.Visibility = Visibility.Collapsed;
+            }
+
         }
     }
 }
