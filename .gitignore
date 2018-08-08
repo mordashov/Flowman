@@ -260,3 +260,8 @@ paket-files/
 __pycache__/
 *.pyc
 /answer_letter.md
+/answer_letter2.html
+/answer_letter2.md
+/answer_letter3.html
+/answer_letter3.md
+/pandoc.ps1
