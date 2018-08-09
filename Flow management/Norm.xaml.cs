@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -23,8 +24,10 @@ namespace Flow_management
             InitializeComponent();
         }
 
-        private void CreateSetDep()
+        private void GenerateNormsStaff()
         {
+            MsAccess acs = new MsAccess();
+            DataTable dt = new DataTable();
             string sql = $@"
                 Select
                   dep.[dep_mn] As Отдел,
@@ -48,10 +51,50 @@ namespace Flow_management
                   nrm On nrm.[stf_tn] = stf.[stf_tn]) Inner Join
                   dep On dep.[dep_id] = stf.[dep_id])
                 Where
-                  (ord.[ord_dt]) = 1
+                  (ord.[ord_dt]) = {DatePickerNorm.SelectedDate:#M-d-yyyy#}
                 Group By
                   dep.[dep_mn], dep.[dep_id]    
                 ";
+            dt = acs.CreateDataTable(sql);
+            //Перебираю строки в DataTable
+            int i = 0;
+            foreach (DataRow row in dt.Rows)
+            {
+                StackPanel stackPanelRow = new StackPanel()
+                {
+                    Orientation = Orientation.Horizontal
+                };
+                for (int j = 0; j < 3; j++)
+                {
+                    TextBox tb = new TextBox()
+                    {
+                        Margin = new Thickness(j == 0 ? 0 : 20, 0, 0, 0),
+                        TextWrapping = TextWrapping.Wrap,
+                        FontSize = 16,
+                        Width = j == 0 ? 200 : 100,
+                        Text = row[j].ToString()
+                    };
+                    stackPanelRow.Children.Add(tb);
+                }
+                StackPanelDep.Children.Add(stackPanelRow);
+            }
+
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            DatePickerNorm.SelectedDate = DateTime.Now;
+            GenerateNormsStaff();
+        }
+
+        private void DatePickerNorm_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            GenerateNormsStaff();
+        }
+
+        private void DatePickerNorm_CalendarClosed(object sender, RoutedEventArgs e)
+        {
+            GenerateNormsStaff();
         }
     }
 }
