@@ -308,5 +308,17 @@ namespace Flow_management
             }
 
         }
+
+        private void TextBoxNumber_GotFocus(object sender, RoutedEventArgs e)
+        {
+            //Удаляю надпись номер, при получении фокуса
+            if (TextBoxNumber.Text == "Номер") TextBoxNumber.Text = "";
+        }
+
+        private void TextBoxNumber_LostFocus(object sender, RoutedEventArgs e)
+        {
+            //Возвращаю надпись номер, при потере фокуса
+            if (TextBoxNumber.Text == "") TextBoxNumber.Text = "Номер";
+        }
     }
 }
