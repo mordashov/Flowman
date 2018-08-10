@@ -284,7 +284,7 @@ namespace Flow_management
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (WindowState == WindowState.Normal)
-                DataGridStaff.Width = Width - 340;
+                DataGridStaff.Width = Width - 360;
         }
 
         private void Window_StateChanged(object sender, EventArgs e)
