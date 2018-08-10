@@ -112,7 +112,8 @@ namespace Flow_management
                     SELECT nrm.stf_tn AS Номер
                     , stf.stf_fln AS ФИО
                     , pos.pos_nm AS Должность
-                    , dep.dep_mn AS Отдел, mde.mde_nm AS Время
+                    , dep.dep_mn AS Отдел
+                    , mde.mde_nm AS Время
                     , stf.stf_tb AS Банки
                     , COUNT(ord.ord_num) AS [Кол-во]
                     , IIf(IsNull(Sum([cor].[cor_scr])),0,Round(100*Sum([cor].[cor_scr])/[nrm].[nrm_scr],0)) AS Процент
@@ -170,6 +171,16 @@ namespace Flow_management
             _tn = dataRow.Row.ItemArray[0].ToString();
             LabelWorker.Content = dataRow.Row.ItemArray[1].ToString();
             _posNm = dataRow.Row.ItemArray[2].ToString();
+            if (dataRow.Row.ItemArray[9].ToString() == "0")
+            {
+                ButtonAdd.Content = "Норма 0";
+                ButtonAdd.IsEnabled = false;
+            }
+            else
+            {
+                ButtonAdd.Content = "Добавить";
+                ButtonAdd.IsEnabled = true;
+            }
         }
 
         private void DataGridStaff_KeyUp(object sender, KeyEventArgs e)
