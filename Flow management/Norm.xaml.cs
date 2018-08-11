@@ -146,11 +146,6 @@ namespace Flow_management
                         Button buttonAdd = (Button)this.FindName("ButtonAdd");
                         if (buttonAdd != null) buttonAdd.Visibility = Visibility.Hidden;
                     }
-                    //else
-                    //{
-                    //    Button buttonAdd = (Button)this.FindName("ButtonAdd");
-                    //    if (buttonAdd != null) buttonAdd.Visibility = Visibility.Visible;
-                    //}
                 }
                 else //Иначе выводим значение DataTable
                 {
