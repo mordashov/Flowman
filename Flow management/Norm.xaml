@@ -18,23 +18,23 @@
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" >
             <DatePicker Name="DatePickerNorm" HorizontalAlignment="Left" Margin="35,0,0,0" FontSize="16" Height="30" MouseUp="DatePickerNorm_MouseUp" CalendarClosed="DatePickerNorm_CalendarClosed"/>
-            <Button Content="Добавить" Margin="35,0,0,0" FontSize="16" Padding="10, 0, 10, 0"/>
+            <Button Name="ButtonAdd" Content="Добавить" Margin="35,0,0,0" FontSize="16" Padding="10, 0, 10, 0"/>
         </StackPanel>
         <StackPanel Grid.Row="2" VerticalAlignment="Top" Background="CornflowerBlue" Height="1"></StackPanel>
         <StackPanel Name="StackPanelDep" Grid.Row="2" Orientation="Vertical" HorizontalAlignment="Left" Margin="35,0,0,0" VerticalAlignment="Top">
             <StackPanel Name="StackPanelDepRow" Orientation="Horizontal">
                 <TextBlock FontSize="16" Width="200" FontWeight="Bold">Отдел</TextBlock>
-                <TextBlock Margin="20, 0, 0, 0" TextWrapping="Wrap" FontSize="16" Width="100" FontWeight="Bold">Норма баллов</TextBlock>
-                <TextBlock Margin="20, 0, 0, 0" TextWrapping="Wrap" FontSize="16" Width="100" FontWeight="Bold">Итого баллов</TextBlock>
-                <TextBlock Margin="20, 0, 0, 0" TextWrapping="Wrap" FontSize="16" Width="100" FontWeight="Bold">Кол-во обращений</TextBlock>
-                <TextBlock Margin="20, 0, 0, 0" TextWrapping="Wrap" FontSize="16" Width="100" FontWeight="Bold">Выполнение норматива</TextBlock>
+                <TextBlock Margin="2, 0, 0, 0" TextWrapping="Wrap" FontSize="16" Width="100" FontWeight="Bold">Норма баллов</TextBlock>
+                <TextBlock Margin="2, 0, 0, 0" TextWrapping="Wrap" FontSize="16" Width="100" FontWeight="Bold">Итого баллов</TextBlock>
+                <TextBlock Margin="2, 0, 0, 0" TextWrapping="Wrap" FontSize="16" Width="100" FontWeight="Bold">Кол-во обращений</TextBlock>
+                <TextBlock Margin="2, 0, 0, 0" TextWrapping="Wrap" FontSize="16" Width="100" FontWeight="Bold">Выполнение норматива</TextBlock>
             </StackPanel>
         </StackPanel>
         <StackPanel Name="StackPanelMp" Grid.Row="3" Orientation="Vertical" HorizontalAlignment="Left" Margin="35,0,0,0" VerticalAlignment="Top">
             <StackPanel Name="StackPanelMpRow" Orientation="Horizontal">
                 <TextBlock FontSize="16" Width="320" FontWeight="Bold">ФИО МП</TextBlock>
-                <TextBlock Margin="20, 0, 0, 0" TextWrapping="Wrap" FontSize="16" Width="100" FontWeight="Bold">Кол-во баллов</TextBlock>
-                <TextBlock Margin="20, 0, 0, 0" TextWrapping="Wrap" FontSize="16" Width="100" FontWeight="Bold">Кол-во обращений</TextBlock>
+                <TextBlock Margin="2, 0, 0, 0" TextWrapping="Wrap" FontSize="16" Width="100" FontWeight="Bold">Кол-во баллов</TextBlock>
+                <TextBlock Margin="2, 0, 0, 0" TextWrapping="Wrap" FontSize="16" Width="100" FontWeight="Bold">Кол-во обращений</TextBlock>
             </StackPanel>
         </StackPanel>
     </Grid>

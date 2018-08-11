@@ -120,9 +120,12 @@ namespace Flow_management
 
         private void CreatePivotTable(StackPanel stackPanel, int[] arraySum, DataRow row = null)
         {
+            ButtonAdd.Visibility = Visibility.Visible;
+
             StackPanel stackPanelRow = new StackPanel()
             {
-                Orientation = Orientation.Horizontal
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(0, 2, 0, 0)
             };
             //Кол-во колонок определенных в шапке таблице в xaml
             int numCols = ((StackPanel) stackPanel.Children[0]).Children.Count;
@@ -138,7 +141,16 @@ namespace Flow_management
                 {
                     txt = j == 0 ? "Итого" : arraySum[j].ToString();
                     fontWeight = FontWeight.FromOpenTypeWeight(700);
-
+                    if (j == 1 & arraySum[j].ToString() != "0")
+                    {
+                        Button buttonAdd = (Button)this.FindName("ButtonAdd");
+                        if (buttonAdd != null) buttonAdd.Visibility = Visibility.Hidden;
+                    }
+                    //else
+                    //{
+                    //    Button buttonAdd = (Button)this.FindName("ButtonAdd");
+                    //    if (buttonAdd != null) buttonAdd.Visibility = Visibility.Visible;
+                    //}
                 }
                 else //Иначе выводим значение DataTable
                 {
@@ -152,7 +164,7 @@ namespace Flow_management
                 //Формируем TextBlock, который потом вложим в StackPanel
                 TextBox tb = new TextBox()
                 {
-                    Margin = new Thickness(j == 0 ? 0 : 20, 0, 0, 0),
+                    Margin = new Thickness(j == 0 ? 0 : 2, 0, 0, 0),
                     TextWrapping = TextWrapping.Wrap,
                     FontSize = 16,
                     Width = width,
