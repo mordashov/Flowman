@@ -131,20 +131,23 @@ namespace Flow_management
             for (int j = 0; j < numCols; j++)
             {
                 string txt;
+                FontWeight fontWeight;
 
-                //Если в вызове нет DataRow то выводим сумму
+                //Если в вызове нет DataRow то выводим сумму и делаем ее жирной
                 if (row == null)
                 {
                     txt = j == 0 ? "Итого" : arraySum[j].ToString();
+                    fontWeight = FontWeight.FromOpenTypeWeight(700);
+
                 }
                 else //Иначе выводим значение DataTable
                 {
                     txt = row[j].ToString();
+                    fontWeight = FontWeight.FromOpenTypeWeight(1);
                 }
 
                 //Получаем ширину колонки из шапке определенной в xaml
                 double width = ((TextBlock) ((StackPanel) stackPanel.Children[0]).Children[j]).Width;
-
 
                 //Формируем TextBlock, который потом вложим в StackPanel
                 TextBox tb = new TextBox()
@@ -153,6 +156,7 @@ namespace Flow_management
                     TextWrapping = TextWrapping.Wrap,
                     FontSize = 16,
                     Width = width,
+                    FontWeight = fontWeight,
                     Text = txt
                 };
                 //Формируем StackPanel строку
