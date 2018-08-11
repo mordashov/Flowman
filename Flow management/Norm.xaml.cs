@@ -26,7 +26,7 @@ namespace Flow_management
 
         private void GenerateNormsDep()
         {
-
+            //Удаляю предыдущую генерацию StackPanel. Все кроме шапки
             while  (StackPanelDep.Children.Count != 1)
             {
                 StackPanelDep.Children.RemoveAt(StackPanelDep.Children.Count - 1);
@@ -67,14 +67,15 @@ namespace Flow_management
             int[] arraySum = new int[5];
             foreach (DataRow row in dt.Rows)
             {
-                CreatePivotTable(StackPanelDep, 4, arraySum, row);
+                CreatePivotTable(StackPanelDep, arraySum, row);
             }
-            CreatePivotTable(StackPanelDep, 4, arraySum);
+            CreatePivotTable(StackPanelDep, arraySum);
         }
 
         private void GenerateNormsMp()
         {
-
+            
+            //Удаляю предыдущую генерацию StackPanel. Все кроме шапки
             while (StackPanelMp.Children.Count != 1)
             {
                 StackPanelMp.Children.RemoveAt(StackPanelMp.Children.Count - 1);
@@ -110,50 +111,60 @@ namespace Flow_management
             int[] arraySum = new int[3];
             foreach (DataRow row in dt.Rows)
             {
-                CreatePivotTable(StackPanelMp, 2, arraySum, row);
+                CreatePivotTable(StackPanelMp, arraySum, row);
             }
 
-            CreatePivotTable(StackPanelMp, 2, arraySum);
+            CreatePivotTable(StackPanelMp, arraySum);
 
         }
 
-        private void CreatePivotTable(StackPanel stackPanel, int numCols, int[] arraySum, DataRow row = null)
+        private void CreatePivotTable(StackPanel stackPanel, int[] arraySum, DataRow row = null)
         {
-            //if (row != null) stackPanel.Children.Clear();
-
             StackPanel stackPanelRow = new StackPanel()
             {
                 Orientation = Orientation.Horizontal
             };
-            for (int j = 0; j <= numCols; j++)
+            //Кол-во колонок определенных в шапке таблице в xaml
+            int numCols = ((StackPanel) stackPanel.Children[0]).Children.Count;
+            
+            //Перебор колонок
+            for (int j = 0; j < numCols; j++)
             {
                 string txt;
 
+                //Если в вызове нет DataRow то выводим сумму
                 if (row == null)
                 {
                     txt = j == 0 ? "Итого" : arraySum[j].ToString();
                 }
-                else
+                else //Иначе выводим значение DataTable
                 {
                     txt = row[j].ToString();
                 }
 
+                //Получаем ширину колонки из шапке определенной в xaml
                 double width = ((TextBlock) ((StackPanel) stackPanel.Children[0]).Children[j]).Width;
 
+
+                //Формируем TextBlock, который потом вложим в StackPanel
                 TextBox tb = new TextBox()
                 {
                     Margin = new Thickness(j == 0 ? 0 : 20, 0, 0, 0),
                     TextWrapping = TextWrapping.Wrap,
                     FontSize = 16,
-                    Width = width, //j == 0 ? 320 : 100,
+                    Width = width,
                     Text = txt
                 };
+                //Формируем StackPanel строку
                 stackPanelRow.Children.Add(tb);
+
+                //Суммирую значения колонок, чтобы потом вывести в итоговом StackPanel
                 if (j != 0 & arraySum.Length > 0)
                 {
                     if (row != null) arraySum[j] += int.Parse(row[j].ToString());
                 }
             }
+            //Добавляю все что нагенерил в родительскую StackPanel
             stackPanel.Children.Add(stackPanelRow);
         }
 
