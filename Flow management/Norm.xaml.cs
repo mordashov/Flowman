@@ -106,27 +106,28 @@ namespace Flow_management
             MsAccess acs = new MsAccess();
             DataTable dt = new DataTable();
             string sql = $@"
-                Select
-                    mng.[mng_fln],
-                    Sum(cor.[cor_scr]) As Итого,
-                    (Select
-                    Count(flw1.[ord_id])
-                    From
-                    flw flw1 Inner Join
-                    mng mng1 On mng1.[mng_tn] = flw1.[mng_tn]
-                    Where
-                    flw1.[mng_tn] = mng.[mng_tn]) As [Кол-во]
+            Select
+                mng.[mng_fln],
+                (Select
+                Sum(cor.[cor_scr]) As Итого
                 From
-                    ((((flw Inner Join
-                    ord On ord.[ord_id] = flw.[ord_id]) Inner Join
-                    app On app.[ord_id] = ord.[ord_id]) Inner Join
-                    cor On cor.[cor_id] = app.[cor_id]) Inner Join
-                    mng On mng.[mng_tn] = flw.[mng_tn])
+                ((flw Inner Join
+                ord On ord.[ord_id] = flw.[ord_id]) Inner Join
+                app On app.[ord_id] = ord.[ord_id]) Inner Join
+                cor On cor.[cor_id] = app.[cor_id]
                 Where
-                    (ord.[ord_dt]) = {DatePickerNorm.SelectedDate:#M-d-yyyy#}
-                Group By
-                    mng.[mng_tn], mng.[mng_fln]
-                ";
+                (ord.[ord_dt]) = {DatePickerNorm.SelectedDate:#M-d-yyyy#} And
+                flw.[mng_tn] = mng.[mng_tn]) As Итого,
+                (Select
+                Count(ord.[ord_id]) As Итого
+                From
+                flw Inner Join
+                ord On ord.[ord_id] = flw.[ord_id]
+                Where
+                (ord.[ord_dt]) = {DatePickerNorm.SelectedDate:#M-d-yyyy#} And
+                flw.[mng_tn] = mng.[mng_tn]) As [Кол-во]
+            From
+                mng";
             dt = acs.CreateDataTable(sql);
             //Перебираю строки в DataTable
             int i = 0;
