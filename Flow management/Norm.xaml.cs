@@ -230,5 +230,11 @@ namespace Flow_management
             GenerateNormsDep();
             GenerateNormsMp();
         }
+
+        private void ButtonAdd_Click(object sender, RoutedEventArgs e)
+        {
+            string sql =
+                $@"INSERT INTO nrm (nrm_dt, stf_tn, nrm_hr, nrm_scr) SELECT #8-12-2018#, stf_tn, nrm_hr, nrm_scr FROM nrm WHERE nrm_dt = (SELECT MAX(nrm_dt) FROM nrm WHERE nrm_dt <= #8-12-2018#)";
+        }
     }
 }
