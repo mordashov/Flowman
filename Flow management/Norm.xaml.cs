@@ -34,32 +34,54 @@ namespace Flow_management
 
             MsAccess acs = new MsAccess();
             DataTable dt = new DataTable();
+
+            //{DatePickerNorm.SelectedDate:#M-d-yyyy#}
             string sql = $@"
-                Select
-                  dep.[dep_mn] As Отдел,
-                  Sum(nrm.[nrm_scr]) As Норма,
-                  Sum(cor.[cor_scr]) As Итого,
-                  (Select
-                    Count(flw1.[ord_id])
-                  From
-                    ((flw flw1 Inner Join
-                    stf stf1 On stf1.[stf_tn] = flw1.[stf_tn]) Inner Join
-                    dep dep1 On dep1.[dep_id] = stf1.[dep_id])
-                  Where
-                    dep1.[dep_id] = dep.[dep_id]) As [Кол-во],
-                  Round(100 * Sum(cor.[cor_scr]) / Sum(nrm.[nrm_scr]), 0) As Выполнение
-                From
-                  ((((((flw Inner Join
-                  ord On ord.[ord_id] = flw.[ord_id]) Inner Join
-                  app On app.[ord_id] = ord.[ord_id]) Inner Join
-                  cor On cor.[cor_id] = app.[cor_id]) Inner Join
-                  stf On stf.[stf_tn] = flw.[stf_tn]) Inner Join
-                  nrm On nrm.[stf_tn] = stf.[stf_tn]) Inner Join
-                  dep On dep.[dep_id] = stf.[dep_id])
-                Where
-                  (ord.[ord_dt]) = {DatePickerNorm.SelectedDate:#M-d-yyyy#}
-                Group By
-                  dep.[dep_mn], dep.[dep_id]    
+              Select
+              dep.[dep_mn] As Отдел,
+              Sum(nrm.[nrm_scr]) As Норма,
+              (Select
+                Sum(cor2.[cor_scr]) As [Sum_cor_scr]
+              From
+                ((((stf stf2 Inner Join
+                flw flw2 On flw2.[stf_tn] = stf2.[stf_tn]) Inner Join
+                dep dep2 On dep2.[dep_id] = stf2.[dep_id]) Inner Join
+                ord ord2 On ord2.[ord_id] = flw2.[ord_id]) Inner Join
+                app app2 On ord2.[ord_id] = app2.[ord_id]) Inner Join
+                cor cor2 On cor2.[cor_id] = app2.[cor_id]
+              Where
+                dep2.[dep_id] = dep.[dep_id] And
+                ord2.[ord_dt] = {DatePickerNorm.SelectedDate:#M-d-yyyy#}) As Итого,
+              (Select
+                Count(flw1.[ord_id])
+              From
+                (((flw flw1 Inner Join
+                stf stf1 On stf1.[stf_tn] = flw1.[stf_tn]) Inner Join
+                dep dep1 On dep1.[dep_id] = stf1.[dep_id]) Inner Join
+                ord ord1 On ord1.[ord_id] = flw1.[ord_id])
+              Where
+                dep1.[dep_id] = dep.[dep_id] And
+                ord1.[ord_dt] = {DatePickerNorm.SelectedDate:#M-d-yyyy#}) As [Кол-во],
+              Round(100 * (Select
+                Sum(cor2.[cor_scr]) As [Sum_cor_scr]
+              From
+                ((((stf stf2 Inner Join
+                flw flw2 On flw2.[stf_tn] = stf2.[stf_tn]) Inner Join
+                dep dep2 On dep2.[dep_id] = stf2.[dep_id]) Inner Join
+                ord ord2 On ord2.[ord_id] = flw2.[ord_id]) Inner Join
+                app app2 On ord2.[ord_id] = app2.[ord_id]) Inner Join
+                cor cor2 On cor2.[cor_id] = app2.[cor_id]
+              Where
+                dep2.[dep_id] = dep.[dep_id] And
+                ord2.[ord_dt] = {DatePickerNorm.SelectedDate:#M-d-yyyy#}) / Sum(nrm.[nrm_scr]), 0) As Выполнение
+            From
+              ((((((stf Inner Join
+              nrm On nrm.[stf_tn] = stf.[stf_tn]) Inner Join
+              dep On dep.[dep_id] = stf.[dep_id])))))
+            Where
+              nrm.[nrm_dt] = {DatePickerNorm.SelectedDate:#M-d-yyyy#}
+            Group By
+              dep.[dep_mn], nrm.[nrm_dt], dep.[dep_id]
                 ";
             dt = acs.CreateDataTable(sql);
             //Перебираю строки в DataTable
@@ -172,7 +194,10 @@ namespace Flow_management
                 //Суммирую значения колонок, чтобы потом вывести в итоговом StackPanel
                 if (j != 0 & arraySum.Length > 0)
                 {
-                    if (row != null) arraySum[j] += int.Parse(row[j].ToString());
+                    string itemSum = "0";
+                    if (row != null) itemSum = row[j].ToString();
+                    if (string.IsNullOrEmpty(itemSum)) itemSum = "0";
+                    arraySum[j] += int.Parse(itemSum);
                 }
             }
             //Добавляю все что нагенерил в родительскую StackPanel
@@ -194,6 +219,12 @@ namespace Flow_management
         }
 
         private void DatePickerNorm_CalendarClosed(object sender, RoutedEventArgs e)
+        {
+            GenerateNormsDep();
+            GenerateNormsMp();
+        }
+
+        private void DatePickerNorm_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
             GenerateNormsDep();
             GenerateNormsMp();

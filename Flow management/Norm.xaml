@@ -13,14 +13,16 @@
             <RowDefinition Height="100*"></RowDefinition>
             <RowDefinition Height="149*"></RowDefinition>
         </Grid.RowDefinitions>
+        <Border Grid.Row="2" BorderBrush="CornflowerBlue" BorderThickness="0,1,0,0" ></Border>
+        <Border Grid.Row="3" BorderBrush="CornflowerBlue" BorderThickness="0,1,0,0" ></Border>
         <StackPanel Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Top">
             <Label Content="Выполнение норм" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="35"/>
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" >
-            <DatePicker Name="DatePickerNorm" HorizontalAlignment="Left" Margin="35,0,0,0" FontSize="16" Height="30" MouseUp="DatePickerNorm_MouseUp" CalendarClosed="DatePickerNorm_CalendarClosed"/>
+            <DatePicker Name="DatePickerNorm" HorizontalAlignment="Left" Margin="35,0,0,0" FontSize="16" Height="30" MouseUp="DatePickerNorm_MouseUp" CalendarClosed="DatePickerNorm_CalendarClosed" SelectedDateChanged="DatePickerNorm_SelectedDateChanged"/>
             <Button Name="ButtonAdd" Content="Добавить" Margin="35,0,0,0" FontSize="16" Padding="10, 0, 10, 0"/>
         </StackPanel>
-        <StackPanel Grid.Row="2" VerticalAlignment="Top" Background="CornflowerBlue" Height="1"></StackPanel>
+        <!--<StackPanel Grid.Row="2" VerticalAlignment="Top" Background="CornflowerBlue" Height="1"></StackPanel>-->
         <StackPanel Name="StackPanelDep" Grid.Row="2" Orientation="Vertical" HorizontalAlignment="Left" Margin="35,0,0,0" VerticalAlignment="Top">
             <StackPanel Name="StackPanelDepRow" Orientation="Horizontal">
                 <TextBlock FontSize="16" Width="200" FontWeight="Bold">Отдел</TextBlock>
