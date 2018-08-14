@@ -143,7 +143,7 @@ namespace Flow_management
 
         private void CreatePivotTable(StackPanel stackPanel, int[] arraySum, DataRow row = null)
         {
-            ButtonAdd.Visibility = Visibility.Visible;
+            if (row != null) ButtonAdd.Visibility = Visibility.Visible;
 
             StackPanel stackPanelRow = new StackPanel()
             {
@@ -233,8 +233,35 @@ namespace Flow_management
 
         private void ButtonAdd_Click(object sender, RoutedEventArgs e)
         {
-            string sql =
-                $@"INSERT INTO nrm (nrm_dt, stf_tn, nrm_hr, nrm_scr) SELECT #8-12-2018#, stf_tn, nrm_hr, nrm_scr FROM nrm WHERE nrm_dt = (SELECT MAX(nrm_dt) FROM nrm WHERE nrm_dt <= #8-12-2018#)";
+
+            MsAccess acs = new MsAccess();
+            string result = "0";
+            string sql = $@"
+                Select
+                  nrm.nrm_id
+                From
+                  nrm
+                Where
+                  nrm.nrm_dt = {DatePickerNorm.SelectedDate:#M-d-yyyy#}
+                ";
+            result = acs.GetValueSql(sql);
+            if (result != "0")
+            {
+                MessageBox.Show ($@"Данные на {DatePickerNorm.SelectedDate:#M-d-yyyy#} уже есть в системе");
+                return;
+            }
+            else
+            {
+
+                sql =
+                    $@"INSERT INTO nrm (nrm_dt, stf_tn, nrm_hr, nrm_scr) 
+                    SELECT {DatePickerNorm.SelectedDate:#M-d-yyyy#}, stf_tn, nrm_hr, nrm_scr 
+                    FROM nrm WHERE nrm_dt = (SELECT MAX(nrm_dt) FROM nrm WHERE nrm_dt <= {
+                            DatePickerNorm.SelectedDate
+                        :#M-d-yyyy#})";
+                acs.GetValueSql(sql);
+                GenerateNormsDep();
+            }
         }
     }
 }

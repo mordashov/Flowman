@@ -93,7 +93,15 @@ namespace Flow_management
         {
             OleDbConnection connection = CreateConnection();
             OleDbCommand command = new OleDbCommand(sql, connection);
-            string valueSql = command.ExecuteScalar().ToString();
+            string valueSql = "0";
+            try
+            {
+                valueSql = command.ExecuteScalar().ToString();
+            }
+            catch (NullReferenceException)
+            {
+                valueSql = "0";
+            }
 
             connection.Close();
 
