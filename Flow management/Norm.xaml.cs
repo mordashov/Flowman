@@ -152,7 +152,7 @@ namespace Flow_management
             };
             //Кол-во колонок определенных в шапке таблице в xaml
             int numCols = ((StackPanel) stackPanel.Children[0]).Children.Count;
-            
+
             //Перебор колонок
             for (int j = 0; j < numCols; j++)
             {
@@ -166,7 +166,7 @@ namespace Flow_management
                     fontWeight = FontWeight.FromOpenTypeWeight(700);
                     if (j == 1 & arraySum[j].ToString() != "0")
                     {
-                        Button buttonAdd = (Button)this.FindName("ButtonAdd");
+                        Button buttonAdd = (Button) this.FindName("ButtonAdd");
                         if (buttonAdd != null) buttonAdd.Visibility = Visibility.Hidden;
                     }
                 }
@@ -201,6 +201,23 @@ namespace Flow_management
                     arraySum[j] += int.Parse(itemSum);
                 }
             }
+
+            //Добавляю кнопку редактирование в своднуб таблицу по нормам
+            if (stackPanel.Name == "StackPanelDep")
+            {
+                Image ico = new Image()
+                {
+                    Source = (ImageSource)Resources["Edit"],
+                };
+                Button editButton = new Button()
+                {
+                    Margin = new Thickness(2, 0, 0, 0),
+                    Width = 50,
+                    Content = ico
+                };
+                stackPanelRow.Children.Add(editButton);
+            }
+
             //Добавляю все что нагенерил в родительскую StackPanel
             stackPanel.Children.Add(stackPanelRow);
         }
