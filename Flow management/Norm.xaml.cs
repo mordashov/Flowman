@@ -143,7 +143,7 @@ namespace Flow_management
 
         private void CreatePivotTable(StackPanel stackPanel, int[] arraySum, DataRow row = null)
         {
-            if (row != null) ButtonAdd.Visibility = Visibility.Visible;
+            if (stackPanel.Name == "StackPanelDep") ButtonAdd.Visibility = Visibility.Visible;
 
             StackPanel stackPanelRow = new StackPanel()
             {
