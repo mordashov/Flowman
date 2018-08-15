@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -8,9 +9,10 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Brushes = System.Windows.Media.Brushes;
+using Image = System.Windows.Controls.Image;
 
 namespace Flow_management
 {
@@ -203,17 +205,15 @@ namespace Flow_management
             }
 
             //Добавляю кнопку редактирование в своднуб таблицу по нормам
-            if (stackPanel.Name == "StackPanelDep")
+            if (stackPanel.Name == "StackPanelDep" & row != null)
             {
-                Image ico = new Image()
-                {
-                    Source = (ImageSource)Resources["Edit"],
-                };
                 Button editButton = new Button()
                 {
                     Margin = new Thickness(2, 0, 0, 0),
-                    Width = 50,
-                    Content = ico
+                    Width = 16,
+                    Height = 16,
+                    Background = Brushes.DarkSeaGreen,
+                    Content = ".."
                 };
                 stackPanelRow.Children.Add(editButton);
             }
