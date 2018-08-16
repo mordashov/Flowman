@@ -7,6 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using Access = Microsoft.Office.Interop.Access;
+
 
 namespace Flow_management
 {
@@ -118,6 +120,19 @@ namespace Flow_management
             connection.Close();
 
             return valueSql;
+        }
+        
+        //открытие таблицы Access
+        public void AccessFormsOpen(string tbl)
+        {
+            //Открытие таблицы Access
+            Access.Application oAccess = null;
+            oAccess = new Access.Application();
+            oAccess.OpenCurrentDatabase(_pathToBase, true);
+            //oAccess.DoCmd.SelectObject(Access.AcObjectType.acForm, tbl, true);
+            //oAccess.RunCommand(Access.AcCommand.acCmdAppMaximize);
+            oAccess.DoCmd.OpenForm(tbl, Access.AcFormView.acFormDS);
+            if (!oAccess.Visible) oAccess.Visible = true;
         }
     }
 }

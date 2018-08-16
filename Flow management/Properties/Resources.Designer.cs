@@ -69,5 +69,15 @@ namespace Flow_management.Properties {
                 return ((System.Drawing.Icon)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Byte[].
+        /// </summary>
+        internal static byte[] norm {
+            get {
+                object obj = ResourceManager.GetObject("norm", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

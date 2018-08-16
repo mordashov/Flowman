@@ -235,10 +235,19 @@ namespace Flow_management
         private void editButton_Click(object sender, RoutedEventArgs e)
         {
             string dep = ((TextBlock) ((StackPanel) ((Button) sender).Parent).Children[0]).Text;
-            MessageBox.Show(dep);
+            MsAccess acs = new MsAccess();
+            string normDbPath = Environment.CurrentDirectory + @"\Resources\Norm.accdb";
+            //Uri uri = new Uri(@"pack://application:,,,/Resources/norm.accdb", UriKind.Absolute);
+            //string normDbPath = uri.AbsolutePath;
+            string sql = "DELETE FROM [{normDbPath}].nrm";
+            acs.GetValueSql(sql);
+            sql =$@"INSERT INTO [{normDbPath}] (nrm.nrm_dt, nrm.stf_tn, stf.stf_fln, pos.pos_nm, nrm.nrm_hr, nrm.nrm_scr) SELECT nrm.nrm_dt, nrm.stf_tn, stf.stf_fln, pos.pos_nm, nrm.nrm_hr, nrm.nrm_scr 
+                        FROM pos INNER JOIN ((dep INNER JOIN stf ON dep.dep_id = stf.dep_id) INNER JOIN nrm ON stf.stf_tn = nrm.stf_tn) ON pos.pos_id = stf.pos_id
+                        WHERE(((dep.dep_mn) = ""{dep}"")); ";
+            acs.GetValueSql(sql);
+            acs.PathToBase = normDbPath;
+            acs.AccessFormsOpen("nrm");
         }
-
-        
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
