@@ -147,11 +147,20 @@ namespace Flow_management
         {
             if (stackPanel.Name == "StackPanelDep") ButtonAdd.Visibility = Visibility.Visible;
 
+            Border stackPanelRowBorder = new Border
+            {
+                BorderBrush = Brushes.CadetBlue,
+                BorderThickness = new Thickness(0.3)
+            };
+
             StackPanel stackPanelRow = new StackPanel()
             {
                 Orientation = Orientation.Horizontal,
-                Margin = new Thickness(0, 2, 0, 0)
+                Margin = new Thickness(0, 2, 0, 0),
             };
+
+            stackPanelRowBorder.Child = stackPanelRow;
+
             //Кол-во колонок определенных в шапке таблице в xaml
             int numCols = ((StackPanel) stackPanel.Children[0]).Children.Count;
 
@@ -182,7 +191,7 @@ namespace Flow_management
                 double width = ((TextBlock) ((StackPanel) stackPanel.Children[0]).Children[j]).Width;
 
                 //Формируем TextBlock, который потом вложим в StackPanel
-                TextBox tb = new TextBox()
+                TextBlock tb = new TextBlock()
                 {
                     Margin = new Thickness(j == 0 ? 0 : 2, 0, 0, 0),
                     TextWrapping = TextWrapping.Wrap,
@@ -215,13 +224,21 @@ namespace Flow_management
                     Background = Brushes.DarkSeaGreen,
                     Content = ".."
                 };
+                editButton.Click += editButton_Click;
                 stackPanelRow.Children.Add(editButton);
             }
 
             //Добавляю все что нагенерил в родительскую StackPanel
-            stackPanel.Children.Add(stackPanelRow);
+            stackPanel.Children.Add(stackPanelRowBorder);
         }
 
+        private void editButton_Click(object sender, RoutedEventArgs e)
+        {
+            string dep = ((TextBlock) ((StackPanel) ((Button) sender).Parent).Children[0]).Text;
+            MessageBox.Show(dep);
+        }
+
+        
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
