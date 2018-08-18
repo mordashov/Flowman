@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.OleDb;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Brushes = System.Windows.Media.Brushes;
@@ -21,6 +23,7 @@ namespace Flow_management
     /// </summary>
     public partial class Norm : Window
     {
+
         public Norm()
         {
             InitializeComponent();
@@ -175,10 +178,10 @@ namespace Flow_management
                 {
                     txt = j == 0 ? "Итого" : arraySum[j].ToString();
                     fontWeight = FontWeight.FromOpenTypeWeight(700);
-                    if (j == 1 & arraySum[j].ToString() != "0")
+                    if (j == 1 & arraySum[j].ToString() != "0" & stackPanel.Name == "StackPanelDep" )
                     {
                         Button buttonAdd = (Button) this.FindName("ButtonAdd");
-                        if (buttonAdd != null) buttonAdd.Visibility = Visibility.Hidden;
+                        if (buttonAdd != null) buttonAdd.Visibility = Visibility.Collapsed;
                     }
                 }
                 else //Иначе выводим значение DataTable
@@ -248,6 +251,10 @@ namespace Flow_management
             acs.GetValueSql(sql);
             acs.PathToBase = normDbPath;
             acs.AccessFormsOpen("nrm");
+            //Подсвечиваю отдел в котором были изменения
+            ((TextBlock)((StackPanel)((Button)sender).Parent).Children[0]).Background = Brushes.OrangeRed;
+            ButtonUpdate.Visibility = Visibility.Visible;
+            ButtonReset.Visibility = Visibility.Visible;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -306,6 +313,97 @@ namespace Flow_management
                 acs.GetValueSql(sql);
                 GenerateNormsDep();
             }
+        }
+
+        private void ButtonUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            MsAccess acs = new MsAccess();
+
+            string normDbPath = Environment.CurrentDirectory + @"\Resources\Norm.accdb";
+            OleDbConnection connection = acs.CreateConnection();
+            OleDbTransaction transaction = connection.BeginTransaction();
+            OleDbCommand command = connection.CreateCommand();
+
+            //Удаление норм из родительской базы
+            command.CommandText =
+                $@"DELETE FROM nrm WHERE nrm_dt = {DatePickerNorm.SelectedDate:#M-d-yyyy#} AND stf_tn IN (SELECT stf_tn FROM nrm IN '{normDbPath}')";
+            command.Transaction = transaction;
+            int deteleRows = 0;
+
+            try
+            {
+                deteleRows = command.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Ошибка удаления старых данных. Проверьте данные и повторите попытку.");
+                connection.Close();
+                return;
+            }
+            
+            //Вставка норм в родительскую базу
+            if (deteleRows > 0)
+            {
+                command.CommandText =
+                    $@"INSERT INTO nrm (nrm_dt, stf_tn, nrm_hr, nrm_scr) SELECT nrm.nrm_dt, nrm.stf_tn, nrm.nrm_hr, nrm.nrm_scr FROM nrm IN '{normDbPath}'";
+                command.Transaction = transaction;
+            }
+
+            int insertRows = 0;
+
+            try
+            {
+                insertRows = command.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Ошибка вставки. Проверьте данные и повторите попытку.");
+                connection.Close();
+                return;
+            }
+
+            //Удаление норм в локальной базе данных
+            if (insertRows > 0)
+            {
+                command.CommandText =
+                    $@"DELETE FROM nrm IN '{normDbPath}'";
+                command.Transaction = transaction;
+            }
+
+            int deleteLocalRows = 0;
+
+            try
+            {
+                deleteLocalRows = command.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Ошибка удаления данных из локальной базы. Проверьте данные и повторите попытку.");
+                connection.Close();
+                return;
+            }
+
+            if (deleteLocalRows == 0)
+            {
+                transaction.Rollback();
+                connection.Close();
+                MessageBox.Show("Ошибка редактирования данных");
+                return;
+            }
+
+            transaction.Commit();
+            connection.Close();
+            MessageBox.Show("Данные изменены");
+            ButtonUpdate.Visibility = Visibility.Collapsed;
+            ButtonReset.Visibility = Visibility.Collapsed;
+            GenerateNormsDep();
+        }
+
+        private void ButtonReset_Click(object sender, RoutedEventArgs e)
+        {
+            ButtonUpdate.Visibility = Visibility.Collapsed;
+            ButtonReset.Visibility = Visibility.Collapsed;
+            GenerateNormsDep();
         }
     }
 }
