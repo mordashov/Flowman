@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -116,7 +117,7 @@ namespace Flow_management
                     , mde.mde_nm AS Время
                     , stf.stf_tb AS Банки
                     , COUNT(ord.ord_num) AS [Кол-во]
-                    , IIf(IsNull(Sum([cor].[cor_scr])),0,Round(100*Sum([cor].[cor_scr])/[nrm].[nrm_scr],0)) AS Процент
+                    , IIf(IsNull(Sum([cor].[cor_scr])) OR IsNull([nrm].[nrm_scr]) OR [nrm].[nrm_scr] = 0,0,Round(100*Sum([cor].[cor_scr])/[nrm].[nrm_scr],0)) AS Процент
                     , Sum(cor.cor_scr) AS Баллы, nrm.nrm_scr AS Норма
                     FROM mde INNER JOIN ((pos INNER JOIN (dep INNER JOIN stf ON dep.dep_id = stf.dep_id) ON pos.pos_id = stf.pos_id) INNER JOIN ((ord LEFT JOIN (cor RIGHT JOIN app ON cor.cor_id = app.cor_id) ON ord.ord_id = app.ord_id) RIGHT JOIN (nrm LEFT JOIN flw ON nrm.stf_tn = flw.stf_tn) ON ord.ord_id = flw.ord_id) ON stf.stf_tn = nrm.stf_tn) ON mde.mde_id = stf.mde_id
                     GROUP BY nrm.stf_tn
@@ -131,14 +132,30 @@ namespace Flow_management
                     , dep.dep_mn
                     , stf.stf_fln
                     HAVING (((nrm.nrm_dt)={dateOrder:#M-d-yyyy#}) AND ((ord.ord_dt)={dateOrder:#M-d-yyyy#} Or (ord.ord_dt) Is Null))
-                    ORDER BY IIf(IsNull(Sum([cor].[cor_scr])),0,Round(100*Sum([cor].[cor_scr])/[nrm].[nrm_scr],0))
+                    ORDER BY IIf(IsNull(Sum([cor].[cor_scr])) OR IsNull([nrm].[nrm_scr]) OR [nrm].[nrm_scr] = 0,0,Round(100*Sum([cor].[cor_scr])/[nrm].[nrm_scr],0))
                     , dep.dep_mn
                     , stf.stf_fln;
                     ";
             DataTable dt = acs.CreateDataTable(sql);
 
             DataGridStaff.ItemsSource = dt.DefaultView;
+            FilterBoxWith(DataGridStaff);
+            //GetMaximumColumnWidth(DataGridStaff, 1)
+                ;
         }
+
+        private void FilterBoxWith(DataGrid dtGrid)
+        {
+            StackPanelFlt.Width = DataGridStaff.Width;
+            StackPanelFlt.Margin = new Thickness(ListBoxContent.Width+40,5,20,5);
+            TextBoxFltFln.Width = 250;
+            DataGridStaff.Columns[1].Width = 250;
+            TextBoxFltPos.Width = 200;
+            TextBoxFltDep.Width = 200;
+            TextBoxFltMode.Width = 100;
+            TextBoxFltBnk.Width = 100;
+        }
+
 
         //Действие при выборе CheckBox
         private void CheckBox_Checked(string chContent)
@@ -306,7 +323,6 @@ namespace Flow_management
             {
                 e.Column.Visibility = Visibility.Collapsed;
             }
-
         }
 
         private void TextBoxNumber_GotFocus(object sender, RoutedEventArgs e)
@@ -320,5 +336,6 @@ namespace Flow_management
             //Возвращаю надпись номер, при потере фокуса
             if (TextBoxNumber.Text == "") TextBoxNumber.Text = "Номер";
         }
+
     }
 }
