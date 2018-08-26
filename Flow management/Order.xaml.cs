@@ -198,7 +198,7 @@ namespace Flow_management
             dv.RowFilter = filter;
             if (dv.Count == 0)
             {
-                MessageBox.Show("Не найдено ни одной строки!");
+                //MessageBox.Show("Не найдено ни одной строки!");
                 return;
             } 
             DataGridStaff.ItemsSource = dv;
@@ -379,14 +379,6 @@ namespace Flow_management
 
         private void StackPanelFlt_KeyUp(object sender, KeyEventArgs e)
         {
-
-            /*
-                    ФИО
-                    Должность
-                    Отдел
-                    Время
-                    Банки
-             */
             IList<string> fieldsList = new List<string>()
             {
                 "ФИО",
@@ -403,22 +395,28 @@ namespace Flow_management
                 if (tb.Text != "")
                 {
                     string and;
-                    if (string.IsNullOrEmpty(_filter))
-                    {
-                        and = null;
-                    }
-                    else
-                    {
-                        and = " AND ";
-                    }
+                    and = string.IsNullOrEmpty(_filter) ? null : " AND ";
                     int cl = i + 1;
                     _filter += and + fieldsList[i] + " LIKE '%" + ((TextBox)sp.Children[i]).Text + "%'";
                 }
             }
-            //MessageBox.Show(_filter);
             DgFilter(_filter);
+            LabelFlt.Visibility = Visibility.Visible;
             _filter = "";
 
+        }
+
+        private void LabelFlt_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            LabelFlt.Visibility = Visibility.Collapsed;
+            GenerateDataGridStaff(_dateOrder);
+            _filter = "";
+            _fltFirstClick = false;
+            TextBoxFltFln.Text = "Фильтр по ФИО";
+            TextBoxFltPos.Text = "должности";
+            TextBoxFltDep.Text = "подразделению";
+            TextBoxFltMode.Text = "времени";
+            TextBoxFltBnk.Text = "банку";
         }
     }
 }

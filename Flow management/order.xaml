@@ -18,6 +18,7 @@
             <Label Name="LabelWorker" Height="40" Width="295" Content="Сотрудник" Margin="20,10,0,10" VerticalContentAlignment="Center" FontSize="16" IsEnabled="False"></Label>
             <Label Name="LabelScore" Height="40" Width="50" Content="0" Margin="20,0,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="16" IsEnabled="False"></Label>
             <Button Name="ButtonAdd" Content="Назначить" Height="40" Width="100" FontSize="16" Margin="60,0,0,0" Click="ButtonAdd_Click"></Button>
+            <Label Name="LabelFlt" Foreground="Red" FontWeight="Bold" Visibility="Collapsed" MouseUp="LabelFlt_MouseUp" FontSize="16" VerticalAlignment="Center" Margin="60,0,0,0">Сбросить фильтр</Label>
         </StackPanel >
         <StackPanel Name="StackPanelFlt" Grid.Row="1" Orientation="Horizontal" Margin="20,5,20,20" HorizontalAlignment="Left" GotFocus="StackPanelFlt_GotFocus" KeyUp="StackPanelFlt_KeyUp">
             <TextBox Name="TextBoxFltFln" Margin="0,0,0,0" Text="Фильтр по ФИО"></TextBox>
