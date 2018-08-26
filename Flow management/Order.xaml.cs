@@ -28,6 +28,8 @@ namespace Flow_management
         private string _tn;
         private string _mngTn;
         private string _posNm;
+        private bool _fltFirstClick = false;
+        private string _filter;
 
         public DateTime DateOrder
         {
@@ -52,6 +54,7 @@ namespace Flow_management
             DatePickerDate.SelectedDate = _dateOrder;
             GenerateListBoxContent();
             GenerateDataGridStaff(_dateOrder);
+
         }
 
         private void GenerateListBoxContent()
@@ -186,6 +189,20 @@ namespace Flow_management
             chContent = chContent.Substring(chContent.LastIndexOf('(') + 1, chContent.Length - chContent.LastIndexOf('(') - 2);
             score = score - int.Parse(chContent);
             LabelScore.Content = score.ToString();
+        }
+
+        private void DgFilter(string filter)
+        {
+            DataTable dt = ((DataView)DataGridStaff.ItemsSource).ToTable();
+            DataView dv = new DataView(dt);
+            dv.RowFilter = filter;
+            if (dv.Count == 0)
+            {
+                MessageBox.Show("Не найдено ни одной строки!");
+                return;
+            } 
+            DataGridStaff.ItemsSource = dv;
+            FilterBoxWith();
         }
 
         private void DataGridStaff_MouseUp(object sender, MouseButtonEventArgs e)
@@ -348,5 +365,60 @@ namespace Flow_management
             if (TextBoxNumber.Text == "") TextBoxNumber.Text = "Номер";
         }
 
+        private void StackPanelFlt_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (!_fltFirstClick)
+            {
+                foreach (var child in ((StackPanel) sender).Children)
+                {
+                    ((TextBox) child).Text = "";
+                }
+                _fltFirstClick = true;
+            }
+        }
+
+        private void StackPanelFlt_KeyUp(object sender, KeyEventArgs e)
+        {
+
+            /*
+                    ФИО
+                    Должность
+                    Отдел
+                    Время
+                    Банки
+             */
+            IList<string> fieldsList = new List<string>()
+            {
+                "ФИО",
+                "Должность",
+                "Отдел",
+                "Время",
+                "Банки"
+            };
+            StackPanel sp = (StackPanel) sender;
+            int countSpChield = sp.Children.Count;
+            for (int i = 0; i < countSpChield; i++)
+            {
+                TextBox tb = (TextBox) sp.Children[i];
+                if (tb.Text != "")
+                {
+                    string and;
+                    if (string.IsNullOrEmpty(_filter))
+                    {
+                        and = null;
+                    }
+                    else
+                    {
+                        and = " AND ";
+                    }
+                    int cl = i + 1;
+                    _filter += and + fieldsList[i] + " LIKE '%" + ((TextBox)sp.Children[i]).Text + "%'";
+                }
+            }
+            //MessageBox.Show(_filter);
+            DgFilter(_filter);
+            _filter = "";
+
+        }
     }
 }
