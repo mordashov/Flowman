@@ -139,23 +139,34 @@ namespace Flow_management
             DataTable dt = acs.CreateDataTable(sql);
 
             DataGridStaff.ItemsSource = dt.DefaultView;
-            FilterBoxWith(DataGridStaff);
-            //GetMaximumColumnWidth(DataGridStaff, 1)
-                ;
+            FilterBoxWith();
+            //GetMaximumColumnWidth(DataGridStaff, 1);
         }
 
-        private void FilterBoxWith(DataGrid dtGrid)
+        //Изменение ширины texbox фильтров вместе с шириной столбцов DataGrid
+        private void FilterBoxWith()
         {
-            StackPanelFlt.Width = DataGridStaff.Width;
-            StackPanelFlt.Margin = new Thickness(ListBoxContent.Width+40,5,20,5);
-            TextBoxFltFln.Width = 250;
-            DataGridStaff.Columns[1].Width = 250;
-            TextBoxFltPos.Width = 200;
-            TextBoxFltDep.Width = 200;
-            TextBoxFltMode.Width = 100;
-            TextBoxFltBnk.Width = 100;
-        }
+            double dtGridWidth = DataGridStaff.ActualWidth;
+            double wth = 0.0;
+           IList<double> widthList = new List<double>()
+           {
+               2.5,
+               1.5,
+               1,
+               0.7,
+               3.0
+           };
 
+            StackPanelFlt.Width = dtGridWidth;
+            StackPanelFlt.Margin = new Thickness(ListBoxContent.Width+40,5,20,5);
+
+            for (int i = 0; i < 5; i++)
+            {
+                wth = dtGridWidth * (widthList[i] / 9);
+                DataGridStaff.Columns[i+1].MinWidth = wth;
+                ((TextBox)StackPanelFlt.Children[i]).Width = wth;
+            }
+        }
 
         //Действие при выборе CheckBox
         private void CheckBox_Checked(string chContent)
