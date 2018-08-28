@@ -415,5 +415,10 @@ namespace Flow_management
             ButtonReset.Visibility = Visibility.Collapsed;
             GenerateNormsDep();
         }
+
+        private void ButtonFormUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            GenerateNormsDep();
+        }
     }
 }
