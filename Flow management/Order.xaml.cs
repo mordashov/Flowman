@@ -213,7 +213,15 @@ namespace Flow_management
         private void GetStaffName()
         {
             DataRowView dataRow = (DataRowView)DataGridStaff.SelectedItem;
-            _tn = dataRow.Row.ItemArray[0].ToString();
+            try
+            {
+                _tn = dataRow.Row.ItemArray[0].ToString();
+            }
+            catch (NullReferenceException)
+            {
+
+                return;
+            }
             LabelWorker.Content = dataRow.Row.ItemArray[1].ToString();
             _posNm = dataRow.Row.ItemArray[2].ToString();
             if (dataRow.Row.ItemArray[9].ToString() == "0")

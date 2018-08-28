@@ -176,8 +176,18 @@ namespace Flow_management
                 //Если в вызове нет DataRow то выводим сумму и делаем ее жирной
                 if (row == null)
                 {
+                    //Вывожу Итого вместо первого значения массива
                     txt = j == 0 ? "Итого" : arraySum[j].ToString();
+                    
+                    //Для последней колонки и для StackPanelDep нахожу отношение кол-ва баллов к норме баллов
+                    if (j == numCols-1 && arraySum[1] != 0 && stackPanel.Name == "StackPanelDep")
+                    {
+                        txt = (arraySum[2] / arraySum[1] * 100).ToString();
+                    } 
+
                     fontWeight = FontWeight.FromOpenTypeWeight(700);
+
+
                     if (j == 1 & arraySum[j].ToString() != "0" & stackPanel.Name == "StackPanelDep" )
                     {
                         Button buttonAdd = (Button) this.FindName("ButtonAdd");
