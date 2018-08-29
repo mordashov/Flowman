@@ -233,7 +233,7 @@ namespace Flow_management
             //Изменение ширины колонок
             List<KeyValuePair<string, int>> list = new List<KeyValuePair<string, int>>
             {
-                new KeyValuePair<string, int>("МП", ColumnWith(300)),
+                new KeyValuePair<string, int>("МП", ColumnWith(280)),
                 new KeyValuePair<string, int>("Обращение", ColumnWith(140)),
                 new KeyValuePair<string, int>("Дата", ColumnWith(100)),
                 new KeyValuePair<string, int>("Сотрудник", ColumnWith(300)),

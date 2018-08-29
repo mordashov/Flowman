@@ -120,6 +120,7 @@ namespace Flow_management
                     , mde.mde_nm AS Время
                     , stf.stf_tb AS Банки
                     , COUNT(ord.ord_num) AS [Кол-во]
+                    , Sum(IIf([cor].[cor_cnt]='Приоритетность для статистики',1,0)) AS Срочных 
                     , IIf(IsNull(Sum([cor].[cor_scr])) OR IsNull([nrm].[nrm_scr]) OR [nrm].[nrm_scr] = 0,0,Round(100*Sum([cor].[cor_scr])/[nrm].[nrm_scr],0)) AS Процент
                     , Sum(cor.cor_scr) AS Баллы, nrm.nrm_scr AS Норма
                     FROM mde INNER JOIN ((pos INNER JOIN (dep INNER JOIN stf ON dep.dep_id = stf.dep_id) ON pos.pos_id = stf.pos_id) INNER JOIN ((ord LEFT JOIN (cor RIGHT JOIN app ON cor.cor_id = app.cor_id) ON ord.ord_id = app.ord_id) RIGHT JOIN (nrm LEFT JOIN flw ON nrm.stf_tn = flw.stf_tn) ON ord.ord_id = flw.ord_id) ON stf.stf_tn = nrm.stf_tn) ON mde.mde_id = stf.mde_id
