@@ -30,6 +30,7 @@ namespace Flow_management
         private string _posNm;
         private bool _fltFirstClick = false;
         private string _filter;
+        private IList<int> _contentOrders;
 
         public DateTime DateOrder
         {
@@ -46,6 +47,12 @@ namespace Flow_management
         public Order()
         {
             InitializeComponent();
+        }
+
+        public IList<int> ContentOrders
+        {
+            get => _contentOrders;
+            set => _contentOrders = value;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -89,6 +96,8 @@ namespace Flow_management
                 ch.Width = 260;
                 ch.Checked += (sender, args) => { CheckBox_Checked(tb.Text); };
                 ch.Unchecked += (sender, args) => { CheckBox_UnChecked(tb.Text); };
+                //должно выполняться если переход на форму был сделан кнопкой Копировать
+                if (_contentOrders.IndexOf(int.Parse(row[0].ToString())) != -1) ch.IsChecked = true;
 
                 //ChekBox добавляю в ListBox
                 ListBoxContent.Items.Insert(i, ch);

@@ -376,5 +376,45 @@ namespace Flow_management
 
 
         }
+
+        private void ButtonCopy_Click(object sender, RoutedEventArgs e)
+        {
+
+            DataRowView dataRow = (DataRowView)DataGridRequests.SelectedItem;
+            string ordNum;
+            try
+            {
+                ordNum = dataRow.Row.ItemArray[1].ToString();
+            }
+            catch (NullReferenceException)
+            {
+
+                return;
+            }
+
+            string sql = $@"SELECT cor.cor_id FROM ord INNER JOIN (cor INNER JOIN app ON cor.cor_id = app.cor_id) ON ord.ord_id = app.ord_id WHERE (((ord.ord_num)='{ordNum}'));";
+            MsAccess acs = new MsAccess();
+            DataTable dt = acs.CreateDataTable(sql);
+            //Преобразую DataTable в IList<int>
+            IList<int> list = dt.AsEnumerable()
+                .Select(r => r.Field<int>("cor_id"))
+                .ToList();
+
+            Order order = new Order
+            {
+                DateOrder = DateTime.Parse(ComboBoxDate.SelectedValue.ToString()),
+                MngTn = ComboBoxMp.SelectedValue.ToString(),
+                //Для расстановки true в checkboxes содержания заявки
+                ContentOrders = list
+            };
+            order.ShowDialog();
+            DataGridReqReload();
+            CountRequestsMp();
+        }
+
+        private void DataGridRequests_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ButtonCopy.Visibility = Visibility.Visible;
+        }
     }
 }
