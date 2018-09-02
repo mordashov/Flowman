@@ -89,19 +89,30 @@ namespace Flow_management
                     Text = row[1].ToString(),
                     TextWrapping = TextWrapping.Wrap,
                     BorderThickness = new Thickness(0,0,0,0),
+                    IsReadOnly = true
                 };
+                tb.MouseLeave += new MouseEventHandler(TextBox_MouseOverFalse);
+                tb.MouseEnter += new MouseEventHandler(TextBox_MouseOverTrue);
 
                 ch.Tag = row[0].ToString();
                 ch.Content = tb;
                 ch.Width = 260;
+                ch.Margin = new Thickness(0,2,0,2);
                 ch.Checked += (sender, args) => { CheckBox_Checked(tb.Text); };
                 ch.Unchecked += (sender, args) => { CheckBox_UnChecked(tb.Text); };
                 //должно выполняться если переход на форму был сделан кнопкой Копировать
-                if (_contentOrders.IndexOf(int.Parse(row[0].ToString())) != -1) ch.IsChecked = true;
+                try
+                {
+                    if (_contentOrders.IndexOf(int.Parse(row[0].ToString())) != -1) ch.IsChecked = true;
+                }
+                catch (NullReferenceException)
+                {
+                    // ignore                
+                }
 
                 //ChekBox добавляю в ListBox
-                ListBoxContent.Items.Insert(i, ch);
-
+                //ListBoxContent.Items.Insert(i, ch);
+                StackPanelContent.Children.Add(ch);
                 //ListBoxContent.ItemTemplate.Template = new Thickness(0,0,0,1);
 
                 i++;
@@ -114,6 +125,16 @@ namespace Flow_management
             //    new KeyValuePair<int, string>(2, "Третий")
             //};
 
+        }
+
+        private void TextBox_MouseOverTrue(object sender, MouseEventArgs e)
+        {
+            ((TextBox) sender).Background = Brushes.LightGray; 
+        }
+
+        private void TextBox_MouseOverFalse(object sender, MouseEventArgs e)
+        {
+            ((TextBox) sender).ClearValue(TextBox.BackgroundProperty);
         }
 
         //Генерация DataGrid с сотрудниками
@@ -171,7 +192,7 @@ namespace Flow_management
            };
 
             StackPanelFlt.Width = dtGridWidth;
-            StackPanelFlt.Margin = new Thickness(ListBoxContent.Width+40,5,20,5);
+            StackPanelFlt.Margin = new Thickness(StackPanelContent.Width+60,5,20,5);
 
             for (int i = 0; i < 5; i++)
             {
@@ -293,7 +314,7 @@ namespace Flow_management
             if (ordInsRows == 1)
             {
                 int appInsRows = 0;
-                foreach (var child in ListBoxContent.Items)
+                foreach (var child in StackPanelContent.Children)
                 {
                     if (child is CheckBox)
                     {
@@ -436,5 +457,6 @@ namespace Flow_management
             TextBoxFltMode.Text = "времени";
             TextBoxFltBnk.Text = "банку";
         }
+
     }
 }

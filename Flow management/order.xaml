@@ -28,8 +28,12 @@
             <TextBox Name="TextBoxFltBnk" Margin="5,0,0,0" Text="банку"></TextBox>
         </StackPanel>
         <StackPanel Name="StackPanelAppears" Grid.Row="2" Orientation="Horizontal">
-            <ListBox Name="ListBoxContent" Width="300" HorizontalAlignment="Left" Margin="20,0,0,20" ></ListBox>
-            <DataGrid Name="DataGridStaff" Width="830" Margin="20,0,0,20" IsReadOnly="True" MouseUp="DataGridStaff_MouseUp" KeyUp="DataGridStaff_KeyUp" AutoGeneratingColumn="DataGridStaff_AutoGeneratingColumn"/>
+            <Border CornerRadius="6" BorderBrush="LightGray" BorderThickness="2" HorizontalAlignment="Left" Margin="20,0,0,20" >
+                <ScrollViewer  >
+                    <StackPanel Name="StackPanelContent" Width="300"  Orientation="Vertical"></StackPanel>
+                </ScrollViewer>
+            </Border>
+        <DataGrid Name="DataGridStaff" Width="830" Margin="20,0,0,20" IsReadOnly="True" MouseUp="DataGridStaff_MouseUp" KeyUp="DataGridStaff_KeyUp" AutoGeneratingColumn="DataGridStaff_AutoGeneratingColumn"/>
         </StackPanel>
     </Grid>
 </Window>
