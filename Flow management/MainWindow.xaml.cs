@@ -374,6 +374,8 @@ namespace Flow_management
             //Подсчет кол-ва обращений
             CountRequestsMp();
 
+            //Запись лога
+            acs.Log(ordNum, "Удаление");
 
         }
 
@@ -410,6 +412,10 @@ namespace Flow_management
             order.ShowDialog();
             DataGridReqReload();
             CountRequestsMp();
+
+            //Запись лога
+            acs.Log(ordNum, "Копирование");
+
         }
 
         private void DataGridRequests_SelectionChanged(object sender, SelectionChangedEventArgs e)

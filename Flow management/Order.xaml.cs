@@ -19,7 +19,7 @@ using System.Windows.Shapes;
 namespace Flow_management
 {
     /// <summary>
-    /// Логика взаимодействия для Order.xaml
+    /// Логика взаимодействия для LogOrder.xaml
     /// </summary>
     public partial class Order : Window
     {
@@ -362,6 +362,10 @@ namespace Flow_management
 
             transaction.Commit();
             connection.Close();
+
+            //Запись лога
+            acs.Log(ordNum, "Добавление");
+
             this.Close();
         }
 

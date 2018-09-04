@@ -134,5 +134,14 @@ namespace Flow_management
             oAccess.DoCmd.OpenForm(tbl, Access.AcFormView.acFormDS);
             if (!oAccess.Visible) oAccess.Visible = true;
         }
+
+        //запись в log
+        public void Log(string order, string action)
+        {
+            MsAccess acs = new MsAccess();
+            string user = Environment.UserName;
+            string sql = $@"insert into log (log_ord, log_usr, log_act) values ('{order}', '{user}', '{action}')";
+            acs.GetValueSql(sql);
+        }
     }
 }

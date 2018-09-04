@@ -24,6 +24,8 @@ namespace Flow_management
     public partial class Norm : Window
     {
 
+        private string _dep;
+
         public Norm()
         {
             InitializeComponent();
@@ -265,6 +267,7 @@ namespace Flow_management
             ((TextBlock)((StackPanel)((Button)sender).Parent).Children[0]).Background = Brushes.OrangeRed;
             ButtonUpdate.Visibility = Visibility.Visible;
             ButtonReset.Visibility = Visibility.Visible;
+            _dep = dep;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -322,6 +325,10 @@ namespace Flow_management
                         :#M-d-yyyy#})";
                 acs.GetValueSql(sql);
                 GenerateNormsDep();
+               
+                //Запись лога
+                acs.Log(DatePickerNorm.SelectedDate.ToString(), "Создание");
+
             }
         }
 
@@ -407,6 +414,9 @@ namespace Flow_management
             ButtonUpdate.Visibility = Visibility.Collapsed;
             ButtonReset.Visibility = Visibility.Collapsed;
             GenerateNormsDep();
+
+            acs.Log(DatePickerNorm.SelectedDate.Value.ToShortDateString() + "_" + _dep , "Изменение");
+
         }
 
         private void ButtonReset_Click(object sender, RoutedEventArgs e)
