@@ -180,15 +180,15 @@ namespace Flow_management
         //Изменение ширины texbox фильтров вместе с шириной столбцов DataGrid
         private void FilterBoxWith()
         {
-            double dtGridWidth = DataGridStaff.ActualWidth;
+            double dtGridWidth = DataGridStaff.Width;
             double wth = 0.0;
            IList<double> widthList = new List<double>()
            {
-               2.5,
+               2,
                1.5,
                1,
                0.7,
-               3.0
+               2.5
            };
 
             StackPanelFlt.Width = dtGridWidth;
@@ -196,8 +196,9 @@ namespace Flow_management
 
             for (int i = 0; i < 5; i++)
             {
-                wth = dtGridWidth * (widthList[i] / 9);
-                DataGridStaff.Columns[i+1].MinWidth = wth;
+                //wth = dtGridWidth * (widthList[i] / 10);
+                wth = dtGridWidth * widthList[i]/10;
+                DataGridStaff.Columns[i+1].Width = wth;
                 ((TextBox)StackPanelFlt.Children[i]).Width = wth;
             }
         }
@@ -377,6 +378,7 @@ namespace Flow_management
 
         private void Window_StateChanged(object sender, EventArgs e)
         {
+
             switch (this.WindowState)
 
             {
@@ -384,7 +386,14 @@ namespace Flow_management
                     //DataGridStaff.Height = SystemParameters.PrimaryScreenHeight - 100;
                     DataGridStaff.Width = SystemParameters.PrimaryScreenWidth - 360;
                     break;
+                case WindowState.Normal:
+                    //DataGridStaff.Height = SystemParameters.PrimaryScreenHeight - 100;
+                    DataGridStaff.Width = this.Width - 360;
+                    break;
             }
+
+            FilterBoxWith();
+
         }
 
         private void DataGridStaff_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
