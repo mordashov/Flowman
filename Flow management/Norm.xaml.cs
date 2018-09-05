@@ -327,7 +327,7 @@ namespace Flow_management
                 GenerateNormsDep();
                
                 //Запись лога
-                acs.Log(DatePickerNorm.SelectedDate.ToString(), "Создание");
+                acs.Log(DatePickerNorm.SelectedDate.Value.ToShortDateString(), "Создание");
 
             }
         }

@@ -255,14 +255,14 @@ namespace Flow_management
             }
             LabelWorker.Content = dataRow.Row.ItemArray[1].ToString();
             _posNm = dataRow.Row.ItemArray[2].ToString();
-            if (dataRow.Row.ItemArray[9].ToString() == "0")
+            if (dataRow.Row.ItemArray[10].ToString() == "0")
             {
                 ButtonAdd.Content = "Норма 0";
                 ButtonAdd.IsEnabled = false;
             }
             else
             {
-                ButtonAdd.Content = "Добавить";
+                ButtonAdd.Content = "Назначить";
                 ButtonAdd.IsEnabled = true;
             }
         }
