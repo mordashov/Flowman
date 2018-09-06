@@ -33,7 +33,35 @@
                     <StackPanel Name="StackPanelContent" Width="300"  Orientation="Vertical"></StackPanel>
                 </ScrollViewer>
             </Border>
-        <DataGrid Name="DataGridStaff" Width="830" Margin="20,0,0,20" IsReadOnly="True" MouseUp="DataGridStaff_MouseUp" KeyUp="DataGridStaff_KeyUp" AutoGeneratingColumn="DataGridStaff_AutoGeneratingColumn"/>
+        <DataGrid Name="DataGridStaff" Width="830" Margin="20,0,0,20" IsReadOnly="True" MouseUp="DataGridStaff_MouseUp" KeyUp="DataGridStaff_KeyUp" AutoGeneratingColumn="DataGridStaff_AutoGeneratingColumn" SelectionMode="Single">
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                           <Setter Property="BorderThickness" Value="0" />
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter Property="BorderThickness" Value="0" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.CellStyle>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="BorderBrush" Value="DodgerBlue" />
+                            <Setter Property="BorderThickness" Value="0,1,0,1" />
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter Property="BorderBrush" Value="DodgerBlue" />
+                            <Setter Property="BorderThickness" Value="0,1,0,1" />
+                        </Trigger>
+
+                        </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
+            </DataGrid>
         </StackPanel>
     </Grid>
 </Window>

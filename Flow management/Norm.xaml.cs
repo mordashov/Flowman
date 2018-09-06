@@ -429,6 +429,22 @@ namespace Flow_management
         private void ButtonFormUpdate_Click(object sender, RoutedEventArgs e)
         {
             GenerateNormsDep();
+            GenerateNormsMp();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (ButtonUpdate.IsVisible)
+            {
+                MessageBox.Show("Внимание! Есть несохраненные изменения.\n" +
+                                "Нажмите кнопку \"Обновить\" или отмените изменения кнопкой \"X\"");
+                e.Cancel = true;
+            }
+        }
+
+        private void ButtonUpdate_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            ButtonFormUpdate.Visibility = e.NewValue.ToString() == "True" ? Visibility.Collapsed : Visibility.Visible;
         }
     }
 }
