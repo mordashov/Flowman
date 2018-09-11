@@ -188,6 +188,9 @@ namespace Flow_management
         {
             // Подсчет кол - ва обращений
             CountRequestsMp();
+
+            ButtonCopy.Visibility = Visibility.Collapsed;
+
         }
 
         private void ComboBoxMp_KeyUp(object sender, KeyEventArgs e)
@@ -285,6 +288,9 @@ namespace Flow_management
 
             //пересчет кол-ва обращений и баллов
             CountRequestsMp();
+            
+            //Скрываю кнопку скопировать
+            ButtonCopy.Visibility = Visibility.Collapsed;
         }
 
         private void ButtonDel_Click(object sender, RoutedEventArgs e)
@@ -382,6 +388,12 @@ namespace Flow_management
         private void ButtonCopy_Click(object sender, RoutedEventArgs e)
         {
 
+            if (ComboBoxMp.SelectedIndex == -1)
+            {
+                MessageBox.Show("Выберите менедежара потока");
+                return;
+            }
+
             DataRowView dataRow = (DataRowView)DataGridRequests.SelectedItem;
             string ordNum;
             try
@@ -420,7 +432,15 @@ namespace Flow_management
 
         private void DataGridRequests_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ButtonCopy.Visibility = Visibility.Visible;
+            if (ComboBoxMp.SelectedIndex == -1 )
+            {
+                ButtonCopy.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                ButtonCopy.Visibility = Visibility.Visible;
+            }
+            
         }
     }
 }

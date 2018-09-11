@@ -436,9 +436,23 @@ namespace Flow_management
         {
             if (ButtonUpdate.IsVisible)
             {
-                MessageBox.Show("Внимание! Есть несохраненные изменения.\n" +
-                                "Нажмите кнопку \"Обновить\" или отмените изменения кнопкой \"X\"");
-                e.Cancel = true;
+                
+                string messageText = "Внимание! Есть несохраненные изменения.\n" +
+                                     "Сохранить изменения?";
+                MessageBoxResult boxResult = MessageBox.Show(messageText, "Внимание!", MessageBoxButton.YesNoCancel);
+                switch (boxResult)
+                {
+                    case MessageBoxResult.Yes:
+                        RoutedEventArgs args = new RoutedEventArgs();
+                        ButtonUpdate_Click(new object(), args);
+                        break;
+                    case MessageBoxResult.No:
+                        return;
+                    case MessageBoxResult.Cancel:
+                        e.Cancel = true;
+                        break;
+                }
+
             }
         }
 

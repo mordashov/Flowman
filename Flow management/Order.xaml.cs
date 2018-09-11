@@ -284,6 +284,13 @@ namespace Flow_management
                 return;
             }
 
+            string countOrd = acs.GetValueSql($@"SELECT flw.ord_id FROM ord INNER JOIN flw ON ord.ord_id = flw.ord_id WHERE ord.ord_num=""{ordNum}""");
+            if (countOrd != "0")
+            {
+                MessageBox.Show("Указанный номер уже заведен в системе");
+                return;
+            }
+
             string worker = LabelWorker.Content.ToString();
             if (string.IsNullOrEmpty(worker) || worker == "Сотрудник")
             {
